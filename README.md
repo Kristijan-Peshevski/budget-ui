@@ -73,3 +73,5 @@ export default defineConfig([
 ])
 
 ```
+notes:
+login page, ui/api, db, i will work frontend, 2 tables at the biginning, 2 entities, 2 services, 2 repositories, mysql, readme na api, jas main page, domain service, applicatin service, mapper, validations, we conntect controllers with dependencies, swagger?whatisit? vo kontroleri se stava wev service, so konstruktor se povika do servicos, vo kontroler ne stavajtre biznis logika, 

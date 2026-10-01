@@ -121,43 +121,169 @@ function Button({
   );
 }
 
-const transactions = [
+interface TransactionItem {
+  id: string;
+  name: string;
+  amount: string;
+  rawAmount: number;
+  time: string;
+  month: string;
+  year: number;
+  quarter: "Q1" | "Q2" | "Q3" | "Q4";
+  icon: IconName;
+  tone: string;
+}
+
+const initialTransactions: TransactionItem[] = [
   {
+    id: "tx-1",
     amount: "−$38.24",
-    icon: "food" as const,
+    rawAmount: 38.24,
+    icon: "food",
     name: "Whole Foods",
     time: "Today, 10:42 AM",
+    month: "Jun",
+    year: 2026,
+    quarter: "Q2",
     tone: "bg-lime-soft text-lime-deep",
   },
   {
+    id: "tx-2",
     amount: "−$12.50",
-    icon: "transport" as const,
+    rawAmount: 12.5,
+    icon: "transport",
     name: "Metro Card",
     time: "Yesterday, 6:18 PM",
+    month: "Jun",
+    year: 2026,
+    quarter: "Q2",
     tone: "bg-blue-soft text-blue-deep",
   },
   {
+    id: "tx-3",
     amount: "−$64.00",
-    icon: "shopping" as const,
+    rawAmount: 64.0,
+    icon: "shopping",
     name: "Uniqlo",
     time: "Jun 18, 2:30 PM",
+    month: "Jun",
+    year: 2026,
+    quarter: "Q2",
     tone: "bg-peach-soft text-peach-deep",
+  },
+  {
+    id: "tx-4",
+    amount: "−$189.50",
+    rawAmount: 189.5,
+    icon: "home",
+    name: "IKEA Furniture",
+    time: "May 24, 11:15 AM",
+    month: "May",
+    year: 2026,
+    quarter: "Q2",
+    tone: "bg-violet-soft text-violet-deep",
+  },
+  {
+    id: "tx-5",
+    amount: "−$42.00",
+    rawAmount: 42.0,
+    icon: "food",
+    name: "Trader Joe's",
+    time: "May 12, 4:20 PM",
+    month: "May",
+    year: 2026,
+    quarter: "Q2",
+    tone: "bg-lime-soft text-lime-deep",
+  },
+  {
+    id: "tx-6",
+    amount: "−$320.00",
+    rawAmount: 320.0,
+    icon: "transport",
+    name: "Flight Tickets",
+    time: "Apr 04, 9:00 AM",
+    month: "Apr",
+    year: 2026,
+    quarter: "Q2",
+    tone: "bg-blue-soft text-blue-deep",
+  },
+  {
+    id: "tx-7",
+    amount: "−$150.00",
+    rawAmount: 150.0,
+    icon: "shopping",
+    name: "Apple Store",
+    time: "Mar 19, 1:45 PM",
+    month: "Mar",
+    year: 2026,
+    quarter: "Q1",
+    tone: "bg-peach-soft text-peach-deep",
+  },
+  {
+    id: "tx-8",
+    amount: "−$85.30",
+    rawAmount: 85.3,
+    icon: "food",
+    name: "Sushi Bistro",
+    time: "Feb 14, 7:30 PM",
+    month: "Feb",
+    year: 2026,
+    quarter: "Q1",
+    tone: "bg-lime-soft text-lime-deep",
+  },
+  {
+    id: "tx-9",
+    amount: "−$1,100.00",
+    rawAmount: 1100.0,
+    icon: "home",
+    name: "Apartment Lease Renewal",
+    time: "Jan 05, 10:00 AM",
+    month: "Jan",
+    year: 2026,
+    quarter: "Q1",
+    tone: "bg-violet-soft text-violet-deep",
+  },
+  {
+    id: "tx-10",
+    amount: "−$95.00",
+    rawAmount: 95.0,
+    icon: "transport",
+    name: "Annual Transit Pass",
+    time: "Jan 02, 3:10 PM",
+    month: "Jan",
+    year: 2026,
+    quarter: "Q1",
+    tone: "bg-blue-soft text-blue-deep",
   },
 ];
 
-const categories = [
+const monthlyCategories = [
   { color: "bg-violet", label: "Home", value: "$1,240", icon: "home" as const, tone: "bg-violet-soft text-violet-deep" },
   { color: "bg-lime", label: "Food", value: "$386", icon: "food" as const, tone: "bg-lime-soft text-lime-deep" },
   { color: "bg-blue", label: "Travel", value: "$148", icon: "transport" as const, tone: "bg-blue-soft text-blue-deep" },
 ];
 
+const yearlyCategories = [
+  { color: "bg-violet", label: "Home", value: "$14,880", icon: "home" as const, tone: "bg-violet-soft text-violet-deep" },
+  { color: "bg-lime", label: "Food", value: "$4,632", icon: "food" as const, tone: "bg-lime-soft text-lime-deep" },
+  { color: "bg-blue", label: "Travel", value: "$3,850", icon: "transport" as const, tone: "bg-blue-soft text-blue-deep" },
+  { color: "bg-peach", label: "Shopping", value: "$2,428", icon: "shopping" as const, tone: "bg-peach-soft text-peach-deep" },
+];
+
 export default function App() {
   const [activeTab, setActiveTab] = useState("Home");
+  const [timeScope, setTimeScope] = useState<"monthly" | "yearly">("yearly");
+  const [selectedYear, setSelectedYear] = useState<number>(2026);
+  const [yearlyQuarterFilter, setYearlyQuarterFilter] = useState<"ALL" | "Q1" | "Q2" | "Q3" | "Q4">("ALL");
   const [sheetOpen, setSheetOpen] = useState(false);
+  const [budgetDetailsOpen, setBudgetDetailsOpen] = useState(false);
+  const [seeAllTransactionsOpen, setSeeAllTransactionsOpen] = useState(false);
+  const [txSearchQuery, setTxSearchQuery] = useState("");
+  const [txCategoryFilter, setTxCategoryFilter] = useState("All");
   const [saved, setSaved] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState("Food");
   const [expenseAmount, setExpenseAmount] = useState("0.00");
-  const [transactionItems, setTransactionItems] = useState(transactions);
+  const [transactionItems, setTransactionItems] = useState<TransactionItem[]>(initialTransactions);
 
   const saveExpense = () => {
     const categoryDetails = {
@@ -167,18 +293,23 @@ export default function App() {
       Home: { icon: "home" as const, tone: "bg-violet-soft text-violet-deep" },
     };
     const detail = categoryDetails[selectedCategory as keyof typeof categoryDetails];
-    const formattedAmount = Number(expenseAmount || 0).toFixed(2);
+    const parsedAmount = Number(expenseAmount || 0);
+    const formattedAmount = parsedAmount.toFixed(2);
 
-    setTransactionItems((items) => [
-      {
-        amount: `−$${formattedAmount}`,
-        icon: detail.icon,
-        name: selectedCategory,
-        time: "Just now",
-        tone: detail.tone,
-      },
-      ...items,
-    ]);
+    const newTx: TransactionItem = {
+      id: `tx-${Date.now()}`,
+      amount: `−$${formattedAmount}`,
+      rawAmount: parsedAmount,
+      icon: detail.icon,
+      name: selectedCategory,
+      time: "Today, Just now",
+      month: "Jun",
+      year: selectedYear,
+      quarter: "Q2",
+      tone: detail.tone,
+    };
+
+    setTransactionItems((items) => [newTx, ...items]);
     setSaved(true);
     window.setTimeout(() => {
       setSheetOpen(false);
@@ -188,11 +319,28 @@ export default function App() {
     }, 850);
   };
 
+  // Filtered transactions for Home tab based on scope
+  const filteredHomeTransactions = transactionItems.filter((tx) => {
+    if (timeScope === "monthly") {
+      return tx.month === "Jun" && tx.year === selectedYear;
+    }
+    // Yearly view
+    if (tx.year !== selectedYear) return false;
+    if (yearlyQuarterFilter !== "ALL") {
+      return tx.quarter === yearlyQuarterFilter;
+    }
+    return true;
+  });
+
+  const yearlyTotalSpent = transactionItems
+    .filter((tx) => tx.year === selectedYear)
+    .reduce((sum, tx) => sum + tx.rawAmount, 28390);
+
   return (
     <div className="min-h-screen bg-ink sm:grid sm:place-items-center sm:p-8">
       <main className="relative mx-auto min-h-screen w-full max-w-md overflow-hidden bg-canvas text-ink shadow-modal sm:min-h-[844px] sm:rounded-[2.25rem] sm:border sm:border-white/15">
         <div className="h-full overflow-y-auto pb-28">
-          <header className="flex items-center justify-between px-5 pb-4 pt-6">
+          <header className="flex items-center justify-between px-5 pb-3 pt-6">
             <div className="flex items-center gap-3">
               <div className="grid size-11 place-items-center rounded-full bg-peach-soft text-sm font-bold text-peach-deep">
                 CM
@@ -213,130 +361,275 @@ export default function App() {
 
           {activeTab === "Home" && (
             <>
-          <section className="px-5">
-            <div className="relative overflow-hidden rounded-3xl bg-ink p-6 text-white shadow-lg shadow-ink/15">
-              <div className="absolute -right-10 -top-14 size-44 rounded-full border-[22px] border-lime/10" />
-              <div className="absolute -bottom-20 right-12 size-36 rounded-full bg-lime/5" />
-              <div className="relative">
-                <div className="flex items-center justify-between">
-                  <p className="text-sm font-medium text-white/55">Available balance</p>
-                  <Button className="flex items-center gap-2 rounded-full bg-white/10 px-3 py-1.5 text-xs font-semibold">
-                    <Icon name="calendar" size={14} /> June
-                  </Button>
+              {/* Home Period Switcher (Monthly vs Yearly) */}
+              <section className="px-5 pb-3">
+                <div className="flex items-center rounded-2xl bg-stone p-1">
+                  <button
+                    className={`flex-1 rounded-xl py-2 text-xs font-semibold transition ${
+                      timeScope === "monthly"
+                        ? "bg-white text-ink shadow-sm"
+                        : "text-muted hover:text-ink"
+                    }`}
+                    onClick={() => setTimeScope("monthly")}
+                    type="button"
+                  >
+                    Monthly (June)
+                  </button>
+                  <button
+                    className={`flex-1 rounded-xl py-2 text-xs font-semibold transition ${
+                      timeScope === "yearly"
+                        ? "bg-white text-ink shadow-sm"
+                        : "text-muted hover:text-ink"
+                    }`}
+                    onClick={() => setTimeScope("yearly")}
+                    type="button"
+                  >
+                    Yearly View ({selectedYear})
+                  </button>
                 </div>
-                <p className="mt-4 text-4xl font-semibold tracking-tight">$2,483.60</p>
-                <div className="mt-6 flex gap-2">
-                  <div className="flex-1 rounded-2xl bg-white/8 p-3">
-                    <p className="text-xs text-white/45">Income</p>
-                    <p className="mt-1 text-sm font-semibold text-lime">+$4,850</p>
-                  </div>
-                  <div className="flex-1 rounded-2xl bg-white/8 p-3">
-                    <p className="text-xs text-white/45">Spent</p>
-                    <p className="mt-1 text-sm font-semibold">−$2,366</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </section>
+              </section>
 
-          <section className="px-5 pt-7">
-            <div className="flex items-center justify-between">
-              <div>
-                <h2 className="text-lg font-semibold tracking-tight">June budget</h2>
-                <p className="mt-0.5 text-xs text-muted">12 days left in your cycle</p>
-              </div>
-              <Button className="text-sm font-semibold text-lime-deep">Details</Button>
-            </div>
-
-            <div className="mt-4 rounded-3xl border border-line bg-white p-5 shadow-card">
-              <div className="flex items-center gap-5">
-                <div className="relative size-24 shrink-0">
-                  <svg className="size-full -rotate-90" viewBox="0 0 120 120">
-                    <circle cx="60" cy="60" fill="none" r="49" stroke="var(--color-stone)" strokeWidth="12" />
-                    <circle
-                      cx="60"
-                      cy="60"
-                      fill="none"
-                      r="49"
-                      stroke="var(--color-lime)"
-                      strokeDasharray="308"
-                      strokeDashoffset="92"
-                      strokeLinecap="round"
-                      strokeWidth="12"
-                    />
-                  </svg>
-                  <div className="absolute inset-0 grid place-items-center text-center">
-                    <div>
-                      <p className="text-xl font-semibold">70%</p>
-                      <p className="text-[10px] font-medium text-muted">spent</p>
+              {/* Balance Card */}
+              <section className="px-5">
+                <div className="relative overflow-hidden rounded-3xl bg-ink p-6 text-white shadow-lg shadow-ink/15">
+                  <div className="absolute -right-10 -top-14 size-44 rounded-full border-[22px] border-lime/10" />
+                  <div className="absolute -bottom-20 right-12 size-36 rounded-full bg-lime/5" />
+                  <div className="relative">
+                    <div className="flex items-center justify-between">
+                      <p className="text-sm font-medium text-white/55">
+                        {timeScope === "yearly" ? `${selectedYear} Net Balance` : "Available balance"}
+                      </p>
+                      {timeScope === "yearly" ? (
+                        <div className="flex items-center gap-1 rounded-full bg-white/10 px-2.5 py-1 text-xs font-semibold">
+                          <Icon name="calendar" size={13} />
+                          <select
+                            aria-label="Select Year"
+                            className="bg-transparent text-white font-semibold outline-none cursor-pointer"
+                            onChange={(e) => setSelectedYear(Number(e.target.value))}
+                            value={selectedYear}
+                          >
+                            <option className="bg-ink text-white" value={2026}>2026</option>
+                            <option className="bg-ink text-white" value={2025}>2025</option>
+                          </select>
+                        </div>
+                      ) : (
+                        <button
+                          className="flex items-center gap-2 rounded-full bg-white/10 px-3 py-1.5 text-xs font-semibold transition hover:bg-white/15"
+                          onClick={() => setTimeScope("yearly")}
+                          type="button"
+                        >
+                          <Icon name="calendar" size={14} /> June
+                        </button>
+                      )}
+                    </div>
+                    <p className="mt-4 text-4xl font-semibold tracking-tight">
+                      {timeScope === "yearly" ? "$29,810.00" : "$2,483.60"}
+                    </p>
+                    <div className="mt-6 flex gap-2">
+                      <div className="flex-1 rounded-2xl bg-white/8 p-3">
+                        <p className="text-xs text-white/45">
+                          {timeScope === "yearly" ? "Annual Income" : "Income"}
+                        </p>
+                        <p className="mt-1 text-sm font-semibold text-lime">
+                          {timeScope === "yearly" ? "+$58,200" : "+$4,850"}
+                        </p>
+                      </div>
+                      <div className="flex-1 rounded-2xl bg-white/8 p-3">
+                        <p className="text-xs text-white/45">
+                          {timeScope === "yearly" ? "Annual Spent" : "Spent"}
+                        </p>
+                        <p className="mt-1 text-sm font-semibold">
+                          {timeScope === "yearly"
+                            ? `−$${yearlyTotalSpent.toLocaleString("en-US", { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`
+                            : "−$2,366"}
+                        </p>
+                      </div>
                     </div>
                   </div>
                 </div>
-                <div className="min-w-0 flex-1">
-                  <p className="text-xs font-medium text-muted">You have left</p>
-                  <p className="mt-1 text-2xl font-semibold tracking-tight">$1,006.40</p>
-                  <p className="mt-2 text-xs leading-5 text-muted">
-                    You’re <span className="font-semibold text-lime-deep">$124 under</span> your usual pace.
-                  </p>
-                </div>
-              </div>
-              <div className="mt-5 flex h-2 overflow-hidden rounded-full bg-stone">
-                <span className="w-1/2 bg-violet" />
-                <span className="w-[16%] bg-lime" />
-                <span className="w-[8%] bg-blue" />
-                <span className="w-[6%] bg-peach" />
-              </div>
-            </div>
-          </section>
+              </section>
 
-          <section className="pt-7">
-            <div className="flex items-center justify-between px-5">
-              <h2 className="text-lg font-semibold tracking-tight">Top spending</h2>
-              <Button ariaLabel="More category options" className="text-muted">
-                <Icon name="more" size={20} />
-              </Button>
-            </div>
-            <div className="mt-4 flex gap-3 overflow-x-auto px-5 pb-2 [scrollbar-width:none]">
-              {categories.map((category) => (
-                <article className="w-32 shrink-0 rounded-2xl border border-line bg-white p-4 shadow-card" key={category.label}>
-                  <div className={`grid size-9 place-items-center rounded-xl ${category.tone}`}>
-                    <Icon name={category.icon} size={17} />
+              {/* Budget / Summary Section */}
+              <section className="px-5 pt-7">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h2 className="text-lg font-semibold tracking-tight">
+                      {timeScope === "yearly" ? `${selectedYear} Budget Pace` : "June budget"}
+                    </h2>
+                    <p className="mt-0.5 text-xs text-muted">
+                      {timeScope === "yearly"
+                        ? "194 days remaining in 2026 cycle"
+                        : "12 days left in your cycle"}
+                    </p>
                   </div>
-                  <p className="mt-4 text-xs font-medium text-muted">{category.label}</p>
-                  <p className="mt-1 font-semibold">{category.value}</p>
-                  <div className="mt-3 h-1 rounded-full bg-stone">
-                    <div className={`h-full w-3/4 rounded-full ${category.color}`} />
-                  </div>
-                </article>
-              ))}
-            </div>
-          </section>
-
-          <section className="px-5 pt-7">
-            <div className="flex items-center justify-between">
-              <div>
-                <h2 className="text-lg font-semibold tracking-tight">Recent activity</h2>
-                <p className="mt-0.5 text-xs text-muted">Latest transactions</p>
-              </div>
-              <Button className="flex items-center gap-0.5 text-sm font-semibold">
-                See all <Icon name="arrow" size={14} />
-              </Button>
-            </div>
-            <div className="mt-4 overflow-hidden rounded-3xl border border-line bg-white px-4 shadow-card">
-              {transactionItems.map((transaction, index) => (
-                <div className="flex items-center gap-3 border-b border-line py-4 last:border-none" key={`${transaction.name}-${transaction.time}-${index}`}>
-                  <div className={`grid size-11 shrink-0 place-items-center rounded-2xl ${transaction.tone}`}>
-                    <Icon name={transaction.icon} size={18} />
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-semibold">{transaction.name}</p>
-                    <p className="mt-1 text-xs text-muted">{transaction.time}</p>
-                  </div>
-                  <p className="text-sm font-semibold">{transaction.amount}</p>
+                  <Button
+                    className="text-sm font-semibold text-lime-deep hover:underline cursor-pointer transition active:scale-95"
+                    onClick={() => setBudgetDetailsOpen(true)}
+                  >
+                    Details
+                  </Button>
                 </div>
-              ))}
-            </div>
-          </section>
+
+                <div className="mt-4 rounded-3xl border border-line bg-white p-5 shadow-card">
+                  <div className="flex items-center gap-5">
+                    <div className="relative size-24 shrink-0">
+                      <svg className="size-full -rotate-90" viewBox="0 0 120 120">
+                        <circle cx="60" cy="60" fill="none" r="49" stroke="var(--color-stone)" strokeWidth="12" />
+                        <circle
+                          cx="60"
+                          cy="60"
+                          fill="none"
+                          r="49"
+                          stroke="var(--color-lime)"
+                          strokeDasharray="308"
+                          strokeDashoffset={timeScope === "yearly" ? "148" : "92"}
+                          strokeLinecap="round"
+                          strokeWidth="12"
+                        />
+                      </svg>
+                      <div className="absolute inset-0 grid place-items-center text-center">
+                        <div>
+                          <p className="text-xl font-semibold">
+                            {timeScope === "yearly" ? "52%" : "70%"}
+                          </p>
+                          <p className="text-[10px] font-medium text-muted">
+                            {timeScope === "yearly" ? "of annual" : "spent"}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="text-xs font-medium text-muted">
+                        {timeScope === "yearly" ? "Remaining annual limit" : "You have left"}
+                      </p>
+                      <p className="mt-1 text-2xl font-semibold tracking-tight">
+                        {timeScope === "yearly" ? "$27,610.00" : "$1,006.40"}
+                      </p>
+                      <p className="mt-2 text-xs leading-5 text-muted">
+                        {timeScope === "yearly" ? (
+                          <>
+                            Avg. monthly spend: <span className="font-semibold text-lime-deep">$2,365/mo</span>
+                          </>
+                        ) : (
+                          <>
+                            You’re <span className="font-semibold text-lime-deep">$124 under</span> your usual pace.
+                          </>
+                        )}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="mt-5 flex h-2 overflow-hidden rounded-full bg-stone">
+                    <span className="w-1/2 bg-violet" />
+                    <span className="w-[16%] bg-lime" />
+                    <span className="w-[8%] bg-blue" />
+                    <span className="w-[6%] bg-peach" />
+                  </div>
+                </div>
+              </section>
+
+              {/* Top spending */}
+              <section className="pt-7">
+                <div className="flex items-center justify-between px-5">
+                  <div>
+                    <h2 className="text-lg font-semibold tracking-tight">
+                      {timeScope === "yearly" ? `${selectedYear} Category Breakdown` : "Top spending"}
+                    </h2>
+                    <p className="mt-0.5 text-xs text-muted">
+                      {timeScope === "yearly" ? "Annual cumulative distribution" : "Most spent this month"}
+                    </p>
+                  </div>
+                  <Button ariaLabel="More category options" className="text-muted">
+                    <Icon name="more" size={20} />
+                  </Button>
+                </div>
+                <div className="mt-4 flex gap-3 overflow-x-auto px-5 pb-2 [scrollbar-width:none]">
+                  {(timeScope === "yearly" ? yearlyCategories : monthlyCategories).map((category) => (
+                    <article className="w-32 shrink-0 rounded-2xl border border-line bg-white p-4 shadow-card" key={category.label}>
+                      <div className={`grid size-9 place-items-center rounded-xl ${category.tone}`}>
+                        <Icon name={category.icon} size={17} />
+                      </div>
+                      <p className="mt-4 text-xs font-medium text-muted">{category.label}</p>
+                      <p className="mt-1 font-semibold">{category.value}</p>
+                      <div className="mt-3 h-1 rounded-full bg-stone">
+                        <div className={`h-full w-3/4 rounded-full ${category.color}`} />
+                      </div>
+                    </article>
+                  ))}
+                </div>
+              </section>
+
+              {/* Transactions Section with Yearly View & Filters */}
+              <section className="px-5 pt-7">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h2 className="text-lg font-semibold tracking-tight">
+                      {timeScope === "yearly" ? `${selectedYear} Transactions` : "Recent activity"}
+                    </h2>
+                    <p className="mt-0.5 text-xs text-muted">
+                      {timeScope === "yearly"
+                        ? `${filteredHomeTransactions.length} recorded this year`
+                        : "Latest transactions"}
+                    </p>
+                  </div>
+                  <Button
+                    className="flex items-center gap-0.5 text-sm font-semibold text-lime-deep hover:underline cursor-pointer transition active:scale-95"
+                    onClick={() => setSeeAllTransactionsOpen(true)}
+                  >
+                    See all <Icon name="arrow" size={14} />
+                  </Button>
+                </div>
+
+                {/* Filter chips for Yearly view */}
+                {timeScope === "yearly" && (
+                  <div className="mt-3 flex gap-1.5 overflow-x-auto pb-1 [scrollbar-width:none]">
+                    {(["ALL", "Q1", "Q2", "Q3", "Q4"] as const).map((q) => (
+                      <button
+                        className={`rounded-full px-3 py-1 text-xs font-semibold transition ${
+                          yearlyQuarterFilter === q
+                            ? "bg-ink text-white shadow-sm"
+                            : "bg-white text-muted border border-line hover:text-ink"
+                        }`}
+                        key={q}
+                        onClick={() => setYearlyQuarterFilter(q)}
+                        type="button"
+                      >
+                        {q === "ALL" ? "All Quarters" : `${q} (${q === "Q1" ? "Jan-Mar" : q === "Q2" ? "Apr-Jun" : q === "Q3" ? "Jul-Sep" : "Oct-Dec"})`}
+                      </button>
+                    ))}
+                  </div>
+                )}
+
+                <div className="mt-4 overflow-hidden rounded-3xl border border-line bg-white px-4 shadow-card">
+                  {filteredHomeTransactions.length === 0 ? (
+                    <div className="py-8 text-center text-sm text-muted">
+                      No transactions found for this period.
+                    </div>
+                  ) : (
+                    filteredHomeTransactions.map((transaction, index) => (
+                      <div
+                        className="flex items-center gap-3 border-b border-line py-4 last:border-none"
+                        key={`${transaction.id}-${index}`}
+                      >
+                        <div className={`grid size-11 shrink-0 place-items-center rounded-2xl ${transaction.tone}`}>
+                          <Icon name={transaction.icon} size={18} />
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-center gap-2">
+                            <p className="truncate text-sm font-semibold">{transaction.name}</p>
+                            {timeScope === "yearly" && (
+                              <span className="rounded bg-stone px-1.5 py-0.5 text-[10px] font-semibold text-muted">
+                                {transaction.quarter}
+                              </span>
+                            )}
+                          </div>
+                          <p className="mt-1 text-xs text-muted">{transaction.time}</p>
+                        </div>
+                        <p className="text-sm font-semibold">{transaction.amount}</p>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </section>
             </>
           )}
 
@@ -593,6 +886,208 @@ export default function App() {
                 ) : (
                   "Save expense"
                 )}
+              </Button>
+            </section>
+          </div>
+        )}
+        {budgetDetailsOpen && (
+          <div
+            className="absolute inset-0 z-50 flex items-end bg-ink/45 backdrop-blur-sm"
+            onMouseDown={() => setBudgetDetailsOpen(false)}
+            role="presentation"
+          >
+            <section
+              aria-label="Budget Details"
+              aria-modal="true"
+              className="max-h-[85vh] w-full overflow-y-auto rounded-t-[2rem] bg-white p-5 pb-8 shadow-modal"
+              onMouseDown={(event) => event.stopPropagation()}
+              role="dialog"
+            >
+              <div className="mx-auto mb-5 h-1 w-10 rounded-full bg-line" />
+              <div className="flex items-start justify-between">
+                <div>
+                  <h2 className="text-xl font-semibold">
+                    {timeScope === "yearly" ? `${selectedYear} Annual Budget Plan` : "June Budget Breakdown"}
+                  </h2>
+                  <p className="mt-1 text-sm text-muted">
+                    {timeScope === "yearly"
+                      ? "Cumulative allocation and progress for the year"
+                      : "Current monthly spending limits and pace"}
+                  </p>
+                </div>
+                <Button
+                  ariaLabel="Close"
+                  className="grid size-9 place-items-center rounded-full bg-stone text-muted"
+                  onClick={() => setBudgetDetailsOpen(false)}
+                >
+                  <Icon name="close" size={17} />
+                </Button>
+              </div>
+
+              <div className="mt-5 grid grid-cols-2 gap-3">
+                <div className="rounded-2xl border border-line bg-stone/50 p-4">
+                  <p className="text-xs font-medium text-muted">Total Budget Limit</p>
+                  <p className="mt-1 text-xl font-semibold tracking-tight">
+                    {timeScope === "yearly" ? "$56,000" : "$3,372.40"}
+                  </p>
+                </div>
+                <div className="rounded-2xl border border-line bg-stone/50 p-4">
+                  <p className="text-xs font-medium text-muted">Remaining Balance</p>
+                  <p className="mt-1 text-xl font-semibold tracking-tight text-lime-deep">
+                    {timeScope === "yearly" ? "$27,610.00" : "$1,006.40"}
+                  </p>
+                </div>
+              </div>
+
+              <div className="mt-5 rounded-2xl border border-line p-4">
+                <h3 className="text-sm font-semibold">Category Allowances</h3>
+                <div className="mt-3 space-y-3">
+                  {[
+                    { label: "Home & Rent", limit: timeScope === "yearly" ? "$18,000" : "$1,500", spent: timeScope === "yearly" ? "$14,880" : "$1,240", pct: "82%", bar: "bg-violet" },
+                    { label: "Food & Groceries", limit: timeScope === "yearly" ? "$6,000" : "$500", spent: timeScope === "yearly" ? "$4,632" : "$386", pct: "77%", bar: "bg-lime" },
+                    { label: "Transport & Travel", limit: timeScope === "yearly" ? "$4,000" : "$300", spent: timeScope === "yearly" ? "$3,850" : "$148", pct: "49%", bar: "bg-blue" },
+                    { label: "Shopping & Lifestyle", limit: timeScope === "yearly" ? "$3,000" : "$250", spent: timeScope === "yearly" ? "$2,428" : "$112", pct: "37%", bar: "bg-peach" },
+                  ].map((cat) => (
+                    <div key={cat.label}>
+                      <div className="flex justify-between text-xs">
+                        <span className="font-medium">{cat.label}</span>
+                        <span className="text-muted">{cat.spent} / {cat.limit} ({cat.pct})</span>
+                      </div>
+                      <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-stone">
+                        <div className={`h-full rounded-full ${cat.bar}`} style={{ width: cat.pct }} />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="mt-4 rounded-2xl bg-lime-soft p-4 text-xs leading-relaxed text-lime-deep">
+                {timeScope === "yearly"
+                  ? "💡 Tip: You are on track! Projected end-of-year savings estimate is ~$12,400 if current pace continues."
+                  : "💡 Tip: You have 12 days remaining in your June cycle with $1,006.40 left. Safe daily spend is ~$83.80."}
+              </div>
+
+              <Button
+                className="mt-5 flex h-12 w-full items-center justify-center rounded-2xl bg-ink text-sm font-semibold text-white transition active:scale-95"
+                onClick={() => setBudgetDetailsOpen(false)}
+              >
+                Done
+              </Button>
+            </section>
+          </div>
+        )}
+
+        {seeAllTransactionsOpen && (
+          <div
+            className="absolute inset-0 z-50 flex items-end bg-ink/45 backdrop-blur-sm"
+            onMouseDown={() => setSeeAllTransactionsOpen(false)}
+            role="presentation"
+          >
+            <section
+              aria-label="All Transactions"
+              aria-modal="true"
+              className="flex max-h-[85vh] w-full flex-col rounded-t-[2rem] bg-white p-5 pb-8 shadow-modal"
+              onMouseDown={(event) => event.stopPropagation()}
+              role="dialog"
+            >
+              <div className="mx-auto mb-4 h-1 w-10 rounded-full bg-line" />
+              <div className="flex items-start justify-between">
+                <div>
+                  <h2 className="text-xl font-semibold">
+                    {timeScope === "yearly" ? `${selectedYear} Transactions` : "June Transactions"}
+                  </h2>
+                  <p className="mt-0.5 text-xs text-muted">
+                    Showing complete history ({transactionItems.filter((t) => timeScope === "yearly" ? t.year === selectedYear : (t.month === "Jun" && t.year === selectedYear)).length} transactions)
+                  </p>
+                </div>
+                <Button
+                  ariaLabel="Close"
+                  className="grid size-9 place-items-center rounded-full bg-stone text-muted"
+                  onClick={() => setSeeAllTransactionsOpen(false)}
+                >
+                  <Icon name="close" size={17} />
+                </Button>
+              </div>
+
+              {/* Search bar */}
+              <div className="mt-4 flex items-center rounded-2xl border border-line bg-stone px-3 py-2 text-sm">
+                <input
+                  className="w-full bg-transparent text-xs font-medium outline-none placeholder:text-muted"
+                  onChange={(e) => setTxSearchQuery(e.target.value)}
+                  placeholder="Search by merchant or category..."
+                  value={txSearchQuery}
+                />
+                {txSearchQuery && (
+                  <button
+                    className="text-xs text-muted hover:text-ink cursor-pointer"
+                    onClick={() => setTxSearchQuery("")}
+                    type="button"
+                  >
+                    Clear
+                  </button>
+                )}
+              </div>
+
+              {/* Category pills */}
+              <div className="mt-3 flex gap-1.5 overflow-x-auto pb-1 [scrollbar-width:none]">
+                {["All", "Food", "Travel", "Shop", "Home"].map((cat) => (
+                  <button
+                    className={`rounded-full px-3 py-1 text-xs font-semibold cursor-pointer transition ${
+                      txCategoryFilter === cat
+                        ? "bg-ink text-white shadow-sm"
+                        : "border border-line bg-white text-muted hover:text-ink"
+                    }`}
+                    key={cat}
+                    onClick={() => setTxCategoryFilter(cat)}
+                    type="button"
+                  >
+                    {cat}
+                  </button>
+                ))}
+              </div>
+
+              {/* Scrollable list */}
+              <div className="mt-3 flex-1 overflow-y-auto space-y-2 pr-1 max-h-[40vh] [scrollbar-width:thin]">
+                {transactionItems
+                  .filter((tx) => {
+                    if (timeScope === "monthly" && (tx.month !== "Jun" || tx.year !== selectedYear)) return false;
+                    if (timeScope === "yearly" && tx.year !== selectedYear) return false;
+                    if (txCategoryFilter !== "All") {
+                      const iconMap: Record<string, string> = { Food: "food", Travel: "transport", Shop: "shopping", Home: "home" };
+                      if (tx.icon !== iconMap[txCategoryFilter]) return false;
+                    }
+                    if (txSearchQuery.trim() !== "" && !tx.name.toLowerCase().includes(txSearchQuery.toLowerCase())) {
+                      return false;
+                    }
+                    return true;
+                  })
+                  .map((transaction, index) => (
+                    <div
+                      className="flex items-center gap-3 rounded-2xl border border-line bg-white p-3 shadow-sm"
+                      key={`all-${transaction.id}-${index}`}
+                    >
+                      <div className={`grid size-10 shrink-0 place-items-center rounded-xl ${transaction.tone}`}>
+                        <Icon name={transaction.icon} size={17} />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center gap-2">
+                          <p className="truncate text-sm font-semibold">{transaction.name}</p>
+                          <span className="rounded bg-stone px-1.5 py-0.5 text-[10px] font-semibold text-muted">
+                            {transaction.quarter}
+                          </span>
+                        </div>
+                        <p className="mt-0.5 text-xs text-muted">{transaction.time}</p>
+                      </div>
+                      <p className="text-sm font-semibold">{transaction.amount}</p>
+                    </div>
+                  ))}
+              </div>
+
+              <Button
+                className="mt-4 flex h-12 w-full items-center justify-center rounded-2xl bg-ink text-sm font-semibold text-white transition active:scale-95"
+                onClick={() => setSeeAllTransactionsOpen(false)}
+              >
+                Close
               </Button>
             </section>
           </div>

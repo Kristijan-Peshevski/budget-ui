@@ -1,4 +1,5 @@
 import { useState, type ReactNode } from "react";
+import mdtLogo from "./assets/mdt-logo.jpg";
 
 type IconName =
   | "arrow"
@@ -7,8 +8,10 @@ type IconName =
   | "chart"
   | "check"
   | "close"
+  | "file"
   | "food"
   | "home"
+  | "logout"
   | "more"
   | "plus"
   | "shopping"
@@ -39,6 +42,21 @@ function Icon({ name, size = 20 }: { name: IconName; size?: number }) {
     ),
     check: <path d="m5 12 4 4L19 6" />,
     close: <path d="m6 6 12 12M18 6 6 18" />,
+    file: (
+      <>
+        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+        <polyline points="14 2 14 8 20 8" />
+        <line x1="16" y1="13" x2="8" y2="13" />
+        <line x1="16" y1="17" x2="8" y2="17" />
+      </>
+    ),
+    logout: (
+      <>
+        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+        <polyline points="16 17 21 12 16 7" />
+        <line x1="21" y1="12" x2="9" y2="12" />
+      </>
+    ),
     food: (
       <>
         <path d="M7 3v8M4 3v5c0 2 1 3 3 3s3-1 3-3V3M7 11v10" />
@@ -124,6 +142,8 @@ function Button({
 interface TransactionItem {
   id: string;
   name: string;
+  contractRef?: string;
+  type: "Invoice" | "Annex" | "Contract";
   amount: string;
   rawAmount: number;
   time: string;
@@ -132,142 +152,173 @@ interface TransactionItem {
   quarter: "Q1" | "Q2" | "Q3" | "Q4";
   icon: IconName;
   tone: string;
+  status: "Paid" | "Pending" | "Approved";
 }
 
 const initialTransactions: TransactionItem[] = [
   {
     id: "tx-1",
-    amount: "−$38.24",
-    rawAmount: 38.24,
-    icon: "food",
-    name: "Whole Foods",
+    amount: "−$14,500.00",
+    rawAmount: 14500,
+    icon: "file",
+    name: "Фактура #INV-2026-041 (Cloud Infrastructure)",
+    contractRef: "CTR-2026-001",
+    type: "Invoice",
     time: "Today, 10:42 AM",
     month: "Jun",
     year: 2026,
     quarter: "Q2",
-    tone: "bg-lime-soft text-lime-deep",
+    tone: "bg-blue-soft text-blue-deep",
+    status: "Paid",
   },
   {
     id: "tx-2",
-    amount: "−$12.50",
-    rawAmount: 12.5,
-    icon: "transport",
-    name: "Metro Card",
-    time: "Yesterday, 6:18 PM",
+    amount: "+$8,000.00",
+    rawAmount: 8000,
+    icon: "chart",
+    name: "Анекс #1 кон Договор за Развој",
+    contractRef: "CTR-2026-002",
+    type: "Annex",
+    time: "Yesterday, 3:15 PM",
     month: "Jun",
     year: 2026,
     quarter: "Q2",
-    tone: "bg-blue-soft text-blue-deep",
+    tone: "bg-lime-soft text-lime-deep",
+    status: "Approved",
   },
   {
     id: "tx-3",
-    amount: "−$64.00",
-    rawAmount: 64.0,
-    icon: "shopping",
-    name: "Uniqlo",
+    amount: "−$6,200.00",
+    rawAmount: 6200,
+    icon: "wallet",
+    name: "Фактура #INV-2026-039 (IT Консалтинг)",
+    contractRef: "CTR-2026-002",
+    type: "Invoice",
     time: "Jun 18, 2:30 PM",
     month: "Jun",
     year: 2026,
     quarter: "Q2",
-    tone: "bg-peach-soft text-peach-deep",
+    tone: "bg-violet-soft text-violet-deep",
+    status: "Paid",
   },
   {
     id: "tx-4",
-    amount: "−$189.50",
-    rawAmount: 189.5,
-    icon: "home",
-    name: "IKEA Furniture",
+    amount: "−$18,900.00",
+    rawAmount: 18900,
+    icon: "file",
+    name: "Фактура #INV-2026-034 (Серверска Опрема)",
+    contractRef: "CTR-2026-001",
+    type: "Invoice",
     time: "May 24, 11:15 AM",
     month: "May",
     year: 2026,
     quarter: "Q2",
-    tone: "bg-violet-soft text-violet-deep",
+    tone: "bg-peach-soft text-peach-deep",
+    status: "Paid",
   },
   {
     id: "tx-5",
-    amount: "−$42.00",
-    rawAmount: 42.0,
-    icon: "food",
-    name: "Trader Joe's",
+    amount: "+$12,500.00",
+    rawAmount: 12500,
+    icon: "chart",
+    name: "Анекс #2 - Дополнителни Модули",
+    contractRef: "CTR-2026-003",
+    type: "Annex",
     time: "May 12, 4:20 PM",
     month: "May",
     year: 2026,
     quarter: "Q2",
     tone: "bg-lime-soft text-lime-deep",
+    status: "Approved",
   },
   {
     id: "tx-6",
-    amount: "−$320.00",
-    rawAmount: 320.0,
-    icon: "transport",
-    name: "Flight Tickets",
+    amount: "−$9,800.00",
+    rawAmount: 9800,
+    icon: "wallet",
+    name: "Фактура #INV-2026-028 (Q2 Одржување)",
+    contractRef: "CTR-2026-003",
+    type: "Invoice",
     time: "Apr 04, 9:00 AM",
     month: "Apr",
     year: 2026,
     quarter: "Q2",
     tone: "bg-blue-soft text-blue-deep",
+    status: "Paid",
   },
   {
     id: "tx-7",
-    amount: "−$150.00",
-    rawAmount: 150.0,
-    icon: "shopping",
-    name: "Apple Store",
+    amount: "−$24,000.00",
+    rawAmount: 24000,
+    icon: "file",
+    name: "Фактура #INV-2026-019 (Софтверски Лиценци)",
+    contractRef: "CTR-2026-004",
+    type: "Invoice",
     time: "Mar 19, 1:45 PM",
     month: "Mar",
     year: 2026,
     quarter: "Q1",
-    tone: "bg-peach-soft text-peach-deep",
+    tone: "bg-violet-soft text-violet-deep",
+    status: "Paid",
   },
   {
     id: "tx-8",
-    amount: "−$85.30",
-    rawAmount: 85.3,
-    icon: "food",
-    name: "Sushi Bistro",
+    amount: "−$15,500.00",
+    rawAmount: 15500,
+    icon: "wallet",
+    name: "Фактура #INV-2026-011 (Безбедносен Аудит)",
+    contractRef: "CTR-2026-005",
+    type: "Invoice",
     time: "Feb 14, 7:30 PM",
     month: "Feb",
     year: 2026,
     quarter: "Q1",
-    tone: "bg-lime-soft text-lime-deep",
+    tone: "bg-peach-soft text-peach-deep",
+    status: "Paid",
   },
   {
     id: "tx-9",
-    amount: "−$1,100.00",
-    rawAmount: 1100.0,
-    icon: "home",
-    name: "Apartment Lease Renewal",
-    time: "Jan 05, 10:00 AM",
-    month: "Jan",
-    year: 2026,
-    quarter: "Q1",
-    tone: "bg-violet-soft text-violet-deep",
-  },
-  {
-    id: "tx-10",
-    amount: "−$95.00",
-    rawAmount: 95.0,
-    icon: "transport",
-    name: "Annual Transit Pass",
-    time: "Jan 02, 3:10 PM",
+    amount: "−$32,000.00",
+    rawAmount: 32000,
+    icon: "file",
+    name: "Фактура #INV-2026-004 (Прва рата Договор за Развој)",
+    contractRef: "CTR-2026-002",
+    type: "Invoice",
+    time: "Jan 15, 10:00 AM",
     month: "Jan",
     year: 2026,
     quarter: "Q1",
     tone: "bg-blue-soft text-blue-deep",
+    status: "Paid",
+  },
+  {
+    id: "tx-10",
+    amount: "+$5,000.00",
+    rawAmount: 5000,
+    icon: "chart",
+    name: "Анекс #1 - Продолжување рок",
+    contractRef: "CTR-2026-005",
+    type: "Annex",
+    time: "Jan 08, 2:00 PM",
+    month: "Jan",
+    year: 2026,
+    quarter: "Q1",
+    tone: "bg-lime-soft text-lime-deep",
+    status: "Approved",
   },
 ];
 
 const monthlyCategories = [
-  { color: "bg-violet", label: "Home", value: "$1,240", icon: "home" as const, tone: "bg-violet-soft text-violet-deep" },
-  { color: "bg-lime", label: "Food", value: "$386", icon: "food" as const, tone: "bg-lime-soft text-lime-deep" },
-  { color: "bg-blue", label: "Travel", value: "$148", icon: "transport" as const, tone: "bg-blue-soft text-blue-deep" },
+  { color: "bg-blue", label: "Договори", value: "$48,500", icon: "file" as const, tone: "bg-blue-soft text-blue-deep" },
+  { color: "bg-lime", label: "Анекси", value: "$8,000", icon: "chart" as const, tone: "bg-lime-soft text-lime-deep" },
+  { color: "bg-violet", label: "Фактури", value: "$20,700", icon: "wallet" as const, tone: "bg-violet-soft text-violet-deep" },
 ];
 
 const yearlyCategories = [
-  { color: "bg-violet", label: "Home", value: "$14,880", icon: "home" as const, tone: "bg-violet-soft text-violet-deep" },
-  { color: "bg-lime", label: "Food", value: "$4,632", icon: "food" as const, tone: "bg-lime-soft text-lime-deep" },
-  { color: "bg-blue", label: "Travel", value: "$3,850", icon: "transport" as const, tone: "bg-blue-soft text-blue-deep" },
-  { color: "bg-peach", label: "Shopping", value: "$2,428", icon: "shopping" as const, tone: "bg-peach-soft text-peach-deep" },
+  { color: "bg-blue", label: "Софтвер и Развој", value: "$145,000", icon: "file" as const, tone: "bg-blue-soft text-blue-deep" },
+  { color: "bg-lime", label: "Анекси кон договори", value: "$25,500", icon: "chart" as const, tone: "bg-lime-soft text-lime-deep" },
+  { color: "bg-violet", label: "Реализирани Фактури", value: "$127,100", icon: "wallet" as const, tone: "bg-violet-soft text-violet-deep" },
+  { color: "bg-peach", label: "Одржување & Cloud", value: "$43,200", icon: "target" as const, tone: "bg-peach-soft text-peach-deep" },
 ];
 
 export default function App() {
@@ -301,12 +352,14 @@ export default function App() {
       amount: `−$${formattedAmount}`,
       rawAmount: parsedAmount,
       icon: detail.icon,
-      name: selectedCategory,
+      name: `Фактура - ${selectedCategory}`,
+      type: "Invoice",
       time: "Today, Just now",
       month: "Jun",
       year: selectedYear,
       quarter: "Q2",
       tone: detail.tone,
+      status: "Paid",
     };
 
     setTransactionItems((items) => [newTx, ...items]);
@@ -332,40 +385,117 @@ export default function App() {
     return true;
   });
 
-  const yearlyTotalSpent = transactionItems
-    .filter((tx) => tx.year === selectedYear)
-    .reduce((sum, tx) => sum + tx.rawAmount, 28390);
+  const yearlyInvoicedTotal = transactionItems
+    .filter((tx) => tx.year === selectedYear && tx.type === "Invoice")
+    .reduce((sum, tx) => sum + tx.rawAmount, 0);
+
+  const yearlyAnnexesTotal = transactionItems
+    .filter((tx) => tx.year === selectedYear && tx.type === "Annex")
+    .reduce((sum, tx) => sum + tx.rawAmount, 0);
+
+  const baseContractBudget = selectedYear === 2026 ? 280000 : 210000;
+  const totalApprovedBudget = baseContractBudget + yearlyAnnexesTotal;
+  const remainingContractBudget = totalApprovedBudget - yearlyInvoicedTotal;
 
   return (
-    <div className="min-h-screen bg-ink sm:grid sm:place-items-center sm:p-8">
-      <main className="relative mx-auto min-h-screen w-full max-w-md overflow-hidden bg-canvas text-ink shadow-modal sm:min-h-[844px] sm:rounded-[2.25rem] sm:border sm:border-white/15">
-        <div className="h-full overflow-y-auto pb-28">
-          <header className="flex items-center justify-between px-5 pb-3 pt-6">
-            <div className="flex items-center gap-3">
-              <div className="grid size-11 place-items-center rounded-full bg-peach-soft text-sm font-bold text-peach-deep">
-                CM
-              </div>
-              <div>
-                <p className="text-xs font-medium text-muted">Good morning</p>
-                <h1 className="text-lg font-semibold tracking-tight">Casey Morgan</h1>
-              </div>
+    <div className="flex h-screen w-screen flex-col overflow-hidden bg-canvas text-ink font-sans">
+      {/* Top Header matching wireframe template */}
+      <header className="flex h-16 shrink-0 items-center justify-between border-b-2 border-ink bg-white px-6">
+        <div className="flex items-center gap-3">
+          <img src={mdtLogo} alt="Logo MDT" className="h-11 w-auto max-w-[200px] object-contain" />
+        </div>
+        <div className="flex items-center gap-5">
+          <div className="flex items-center gap-2.5">
+            <div className="grid size-9 place-items-center rounded-full bg-peach-soft text-xs font-bold text-peach-deep">
+              КП
             </div>
-            <Button
-              ariaLabel="Notifications"
-              className="relative grid size-11 place-items-center rounded-full border border-line bg-white shadow-sm"
-            >
-              <Icon name="bell" size={19} />
-              <span className="absolute right-3 top-2.5 size-2 rounded-full border-2 border-white bg-peach-deep" />
-            </Button>
-          </header>
+            <div>
+              <p className="text-sm font-semibold text-ink">Кристијан Пешевски</p>
+            </div>
+          </div>
+          <button
+            className="flex items-center gap-1.5 rounded-xl border border-line bg-stone px-3.5 py-1.5 text-xs font-semibold text-ink transition hover:border-peach-deep hover:bg-peach-soft hover:text-peach-deep cursor-pointer"
+            onClick={() => alert("Одјавени сте успешно")}
+            type="button"
+          >
+            <Icon name="logout" size={15} />
+            Одјави се
+          </button>
+        </div>
+      </header>
 
+      {/* Main Body: Left Sidebar + Right Content Area */}
+      <div className="flex flex-1 overflow-hidden">
+        {/* Left Sidebar matching wireframe */}
+        <aside className="flex w-60 md:w-64 shrink-0 flex-col border-r-2 border-ink bg-white p-4">
+          <nav className="space-y-1.5">
+            <button
+              className={`flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold transition cursor-pointer ${
+                activeTab === "Home"
+                  ? "bg-lime-soft text-lime-deep shadow-sm"
+                  : "text-muted hover:bg-stone hover:text-ink"
+              }`}
+              onClick={() => setActiveTab("Home")}
+              type="button"
+            >
+              <Icon name="home" size={18} />
+              Home / Overview
+            </button>
+            <button
+              className={`flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold transition cursor-pointer ${
+                activeTab === "Contracts"
+                  ? "bg-lime-soft text-lime-deep shadow-sm"
+                  : "text-muted hover:bg-stone hover:text-ink"
+              }`}
+              onClick={() => setActiveTab("Contracts")}
+              type="button"
+            >
+              <Icon name="file" size={18} />
+              Contracts
+            </button>
+            <button
+              className={`flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold transition cursor-pointer ${
+                activeTab === "Invoices"
+                  ? "bg-lime-soft text-lime-deep shadow-sm"
+                  : "text-muted hover:bg-stone hover:text-ink"
+              }`}
+              onClick={() => setActiveTab("Invoices")}
+              type="button"
+            >
+              <Icon name="wallet" size={18} />
+              Invoices
+            </button>
+          </nav>
+
+          <div className="mt-auto border-t border-line pt-4">
+            <button
+              className="flex w-full items-center justify-center gap-2 rounded-xl bg-ink py-2.5 text-xs font-semibold text-white shadow-sm hover:bg-ink-soft cursor-pointer transition active:scale-95"
+              onClick={() => setSheetOpen(true)}
+              type="button"
+            >
+              <Icon name="plus" size={15} />
+              Add Expense
+            </button>
+          </div>
+        </aside>
+
+        {/* Right Main Screen Content Area */}
+        <main className="flex-1 overflow-y-auto bg-canvas p-6 md:p-8">
           {activeTab === "Home" && (
-            <>
-              {/* Home Period Switcher (Monthly vs Yearly) */}
-              <section className="px-5 pb-3">
-                <div className="flex items-center rounded-2xl bg-stone p-1">
+            <div className="mx-auto max-w-6xl space-y-6">
+              {/* Header with Title and Period Switcher */}
+              <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                  <h1 className="text-2xl font-bold tracking-tight text-ink">Financial Dashboard</h1>
+                  <p className="mt-1 text-sm text-muted">
+                    Track your annual budget, cash flow, and transaction activity.
+                  </p>
+                </div>
+
+                {/* Period Switcher (Monthly vs Yearly) */}
+                <div className="flex items-center rounded-2xl bg-stone p-1 w-full sm:w-auto">
                   <button
-                    className={`flex-1 rounded-xl py-2 text-xs font-semibold transition ${
+                    className={`flex-1 sm:flex-initial rounded-xl px-4 py-2 text-xs font-semibold transition cursor-pointer ${
                       timeScope === "monthly"
                         ? "bg-white text-ink shadow-sm"
                         : "text-muted hover:text-ink"
@@ -376,7 +506,7 @@ export default function App() {
                     Monthly (June)
                   </button>
                   <button
-                    className={`flex-1 rounded-xl py-2 text-xs font-semibold transition ${
+                    className={`flex-1 sm:flex-initial rounded-xl px-4 py-2 text-xs font-semibold transition cursor-pointer ${
                       timeScope === "yearly"
                         ? "bg-white text-ink shadow-sm"
                         : "text-muted hover:text-ink"
@@ -387,17 +517,18 @@ export default function App() {
                     Yearly View ({selectedYear})
                   </button>
                 </div>
-              </section>
+              </div>
 
-              {/* Balance Card */}
-              <section className="px-5">
+              {/* Grid with Balance Card & Budget Pace */}
+              <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+                {/* Balance Card */}
                 <div className="relative overflow-hidden rounded-3xl bg-ink p-6 text-white shadow-lg shadow-ink/15">
                   <div className="absolute -right-10 -top-14 size-44 rounded-full border-[22px] border-lime/10" />
                   <div className="absolute -bottom-20 right-12 size-36 rounded-full bg-lime/5" />
                   <div className="relative">
                     <div className="flex items-center justify-between">
                       <p className="text-sm font-medium text-white/55">
-                        {timeScope === "yearly" ? `${selectedYear} Net Balance` : "Available balance"}
+                        {timeScope === "yearly" ? `${selectedYear} Преостанат Буџет за Реализација` : "Преостанат буџет за месецот"}
                       </p>
                       {timeScope === "yearly" ? (
                         <div className="flex items-center gap-1 rounded-full bg-white/10 px-2.5 py-1 text-xs font-semibold">
@@ -414,7 +545,7 @@ export default function App() {
                         </div>
                       ) : (
                         <button
-                          className="flex items-center gap-2 rounded-full bg-white/10 px-3 py-1.5 text-xs font-semibold transition hover:bg-white/15"
+                          className="flex items-center gap-2 rounded-full bg-white/10 px-3 py-1.5 text-xs font-semibold transition hover:bg-white/15 cursor-pointer"
                           onClick={() => setTimeScope("yearly")}
                           type="button"
                         >
@@ -423,55 +554,57 @@ export default function App() {
                       )}
                     </div>
                     <p className="mt-4 text-4xl font-semibold tracking-tight">
-                      {timeScope === "yearly" ? "$29,810.00" : "$2,483.60"}
+                      {timeScope === "yearly"
+                        ? `$${remainingContractBudget.toLocaleString("en-US", { minimumFractionDigits: 2 })}`
+                        : "$2,483.60"}
                     </p>
-                    <div className="mt-6 flex gap-2">
-                      <div className="flex-1 rounded-2xl bg-white/8 p-3">
+                    <div className="mt-6 flex gap-3">
+                      <div className="flex-1 rounded-2xl bg-white/8 p-4">
                         <p className="text-xs text-white/45">
-                          {timeScope === "yearly" ? "Annual Income" : "Income"}
+                          {timeScope === "yearly" ? "Вкупен Буџет (Договори + Анекси)" : "Планиран буџет"}
                         </p>
-                        <p className="mt-1 text-sm font-semibold text-lime">
-                          {timeScope === "yearly" ? "+$58,200" : "+$4,850"}
+                        <p className="mt-1 text-lg font-semibold text-lime">
+                          {timeScope === "yearly"
+                            ? `+$${totalApprovedBudget.toLocaleString("en-US")}`
+                            : "+$4,850"}
                         </p>
                       </div>
-                      <div className="flex-1 rounded-2xl bg-white/8 p-3">
+                      <div className="flex-1 rounded-2xl bg-white/8 p-4">
                         <p className="text-xs text-white/45">
-                          {timeScope === "yearly" ? "Annual Spent" : "Spent"}
+                          {timeScope === "yearly" ? "Фактурирано / Исплатено" : "Реализирано"}
                         </p>
-                        <p className="mt-1 text-sm font-semibold">
+                        <p className="mt-1 text-lg font-semibold">
                           {timeScope === "yearly"
-                            ? `−$${yearlyTotalSpent.toLocaleString("en-US", { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`
+                            ? `−$${yearlyInvoicedTotal.toLocaleString("en-US", { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`
                             : "−$2,366"}
                         </p>
                       </div>
                     </div>
                   </div>
                 </div>
-              </section>
 
-              {/* Budget / Summary Section */}
-              <section className="px-5 pt-7">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h2 className="text-lg font-semibold tracking-tight">
-                      {timeScope === "yearly" ? `${selectedYear} Budget Pace` : "June budget"}
-                    </h2>
-                    <p className="mt-0.5 text-xs text-muted">
-                      {timeScope === "yearly"
-                        ? "194 days remaining in 2026 cycle"
-                        : "12 days left in your cycle"}
-                    </p>
+                {/* Budget Pace Card */}
+                <div className="flex flex-col justify-between rounded-3xl border border-line bg-white p-6 shadow-card">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h2 className="text-lg font-semibold tracking-tight">
+                        {timeScope === "yearly" ? `${selectedYear} Реализација на Буџет` : "June budget"}
+                      </h2>
+                      <p className="mt-0.5 text-xs text-muted">
+                        {timeScope === "yearly"
+                          ? "194 дена преостанати во фискалната 2026 година"
+                          : "12 days left in your cycle"}
+                      </p>
+                    </div>
+                    <Button
+                      className="text-sm font-semibold text-lime-deep hover:underline cursor-pointer transition active:scale-95"
+                      onClick={() => setBudgetDetailsOpen(true)}
+                    >
+                      Details
+                    </Button>
                   </div>
-                  <Button
-                    className="text-sm font-semibold text-lime-deep hover:underline cursor-pointer transition active:scale-95"
-                    onClick={() => setBudgetDetailsOpen(true)}
-                  >
-                    Details
-                  </Button>
-                </div>
 
-                <div className="mt-4 rounded-3xl border border-line bg-white p-5 shadow-card">
-                  <div className="flex items-center gap-5">
+                  <div className="my-4 flex items-center gap-5">
                     <div className="relative size-24 shrink-0">
                       <svg className="size-full -rotate-90" viewBox="0 0 120 120">
                         <circle cx="60" cy="60" fill="none" r="49" stroke="var(--color-stone)" strokeWidth="12" />
@@ -482,7 +615,7 @@ export default function App() {
                           r="49"
                           stroke="var(--color-lime)"
                           strokeDasharray="308"
-                          strokeDashoffset={timeScope === "yearly" ? "148" : "92"}
+                          strokeDashoffset={timeScope === "yearly" ? `${Math.round(308 - (308 * Math.round((yearlyInvoicedTotal / totalApprovedBudget) * 100)) / 100)}` : "92"}
                           strokeLinecap="round"
                           strokeWidth="12"
                         />
@@ -490,25 +623,27 @@ export default function App() {
                       <div className="absolute inset-0 grid place-items-center text-center">
                         <div>
                           <p className="text-xl font-semibold">
-                            {timeScope === "yearly" ? "52%" : "70%"}
+                            {timeScope === "yearly"
+                              ? `${Math.round((yearlyInvoicedTotal / totalApprovedBudget) * 100)}%`
+                              : "70%"}
                           </p>
                           <p className="text-[10px] font-medium text-muted">
-                            {timeScope === "yearly" ? "of annual" : "spent"}
+                            {timeScope === "yearly" ? "реализирано" : "потрошено"}
                           </p>
                         </div>
                       </div>
                     </div>
                     <div className="min-w-0 flex-1">
                       <p className="text-xs font-medium text-muted">
-                        {timeScope === "yearly" ? "Remaining annual limit" : "You have left"}
+                        {timeScope === "yearly" ? "Одобрени Анекси кон договори" : "You have left"}
                       </p>
-                      <p className="mt-1 text-2xl font-semibold tracking-tight">
-                        {timeScope === "yearly" ? "$27,610.00" : "$1,006.40"}
+                      <p className="mt-1 text-2xl font-semibold tracking-tight text-lime-deep">
+                        {timeScope === "yearly" ? `+$${yearlyAnnexesTotal.toLocaleString("en-US")}` : "$1,006.40"}
                       </p>
                       <p className="mt-2 text-xs leading-5 text-muted">
                         {timeScope === "yearly" ? (
                           <>
-                            Avg. monthly spend: <span className="font-semibold text-lime-deep">$2,365/mo</span>
+                            Активни анекси: <span className="font-semibold text-lime-deep">3 дополнувања</span> на договори
                           </>
                         ) : (
                           <>
@@ -518,18 +653,19 @@ export default function App() {
                       </p>
                     </div>
                   </div>
-                  <div className="mt-5 flex h-2 overflow-hidden rounded-full bg-stone">
-                    <span className="w-1/2 bg-violet" />
+
+                  <div className="flex h-2 overflow-hidden rounded-full bg-stone">
+                    <span className="w-1/2 bg-blue" />
                     <span className="w-[16%] bg-lime" />
-                    <span className="w-[8%] bg-blue" />
-                    <span className="w-[6%] bg-peach" />
+                    <span className="w-[18%] bg-violet" />
+                    <span className="w-[16%] bg-peach" />
                   </div>
                 </div>
-              </section>
+              </div>
 
-              {/* Top spending */}
-              <section className="pt-7">
-                <div className="flex items-center justify-between px-5">
+              {/* Categories */}
+              <div>
+                <div className="flex items-center justify-between">
                   <div>
                     <h2 className="text-lg font-semibold tracking-tight">
                       {timeScope === "yearly" ? `${selectedYear} Category Breakdown` : "Top spending"}
@@ -538,29 +674,26 @@ export default function App() {
                       {timeScope === "yearly" ? "Annual cumulative distribution" : "Most spent this month"}
                     </p>
                   </div>
-                  <Button ariaLabel="More category options" className="text-muted">
-                    <Icon name="more" size={20} />
-                  </Button>
                 </div>
-                <div className="mt-4 flex gap-3 overflow-x-auto px-5 pb-2 [scrollbar-width:none]">
+                <div className="mt-3 grid grid-cols-2 gap-4 sm:grid-cols-4">
                   {(timeScope === "yearly" ? yearlyCategories : monthlyCategories).map((category) => (
-                    <article className="w-32 shrink-0 rounded-2xl border border-line bg-white p-4 shadow-card" key={category.label}>
+                    <article className="rounded-2xl border border-line bg-white p-4 shadow-card" key={category.label}>
                       <div className={`grid size-9 place-items-center rounded-xl ${category.tone}`}>
                         <Icon name={category.icon} size={17} />
                       </div>
-                      <p className="mt-4 text-xs font-medium text-muted">{category.label}</p>
-                      <p className="mt-1 font-semibold">{category.value}</p>
-                      <div className="mt-3 h-1 rounded-full bg-stone">
+                      <p className="mt-3 text-xs font-medium text-muted">{category.label}</p>
+                      <p className="mt-1 text-lg font-semibold">{category.value}</p>
+                      <div className="mt-3 h-1.5 rounded-full bg-stone">
                         <div className={`h-full w-3/4 rounded-full ${category.color}`} />
                       </div>
                     </article>
                   ))}
                 </div>
-              </section>
+              </div>
 
               {/* Transactions Section with Yearly View & Filters */}
-              <section className="px-5 pt-7">
-                <div className="flex items-center justify-between">
+              <div className="rounded-3xl border border-line bg-white p-6 shadow-card">
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                   <div>
                     <h2 className="text-lg font-semibold tracking-tight">
                       {timeScope === "yearly" ? `${selectedYear} Transactions` : "Recent activity"}
@@ -571,20 +704,29 @@ export default function App() {
                         : "Latest transactions"}
                     </p>
                   </div>
-                  <Button
-                    className="flex items-center gap-0.5 text-sm font-semibold text-lime-deep hover:underline cursor-pointer transition active:scale-95"
-                    onClick={() => setSeeAllTransactionsOpen(true)}
-                  >
-                    See all <Icon name="arrow" size={14} />
-                  </Button>
+                  <div className="flex items-center gap-3">
+                    <Button
+                      className="flex items-center gap-0.5 text-sm font-semibold text-lime-deep hover:underline cursor-pointer transition active:scale-95"
+                      onClick={() => setSeeAllTransactionsOpen(true)}
+                    >
+                      See all <Icon name="arrow" size={14} />
+                    </Button>
+                    <button
+                      className="flex items-center gap-1.5 rounded-xl bg-lime px-3.5 py-1.5 text-xs font-semibold text-ink transition hover:bg-lime/90 cursor-pointer"
+                      onClick={() => setSheetOpen(true)}
+                      type="button"
+                    >
+                      <Icon name="plus" size={15} /> Add Expense
+                    </button>
+                  </div>
                 </div>
 
                 {/* Filter chips for Yearly view */}
                 {timeScope === "yearly" && (
-                  <div className="mt-3 flex gap-1.5 overflow-x-auto pb-1 [scrollbar-width:none]">
+                  <div className="mt-4 flex gap-1.5 overflow-x-auto pb-1 [scrollbar-width:none]">
                     {(["ALL", "Q1", "Q2", "Q3", "Q4"] as const).map((q) => (
                       <button
-                        className={`rounded-full px-3 py-1 text-xs font-semibold transition ${
+                        className={`rounded-full px-3 py-1 text-xs font-semibold transition cursor-pointer ${
                           yearlyQuarterFilter === q
                             ? "bg-ink text-white shadow-sm"
                             : "bg-white text-muted border border-line hover:text-ink"
@@ -599,7 +741,7 @@ export default function App() {
                   </div>
                 )}
 
-                <div className="mt-4 overflow-hidden rounded-3xl border border-line bg-white px-4 shadow-card">
+                <div className="mt-4 divide-y divide-line">
                   {filteredHomeTransactions.length === 0 ? (
                     <div className="py-8 text-center text-sm text-muted">
                       No transactions found for this period.
@@ -607,211 +749,159 @@ export default function App() {
                   ) : (
                     filteredHomeTransactions.map((transaction, index) => (
                       <div
-                        className="flex items-center gap-3 border-b border-line py-4 last:border-none"
+                        className="flex items-center gap-4 py-3.5 first:pt-0 last:pb-0"
                         key={`${transaction.id}-${index}`}
                       >
                         <div className={`grid size-11 shrink-0 place-items-center rounded-2xl ${transaction.tone}`}>
                           <Icon name={transaction.icon} size={18} />
                         </div>
                         <div className="min-w-0 flex-1">
-                          <div className="flex items-center gap-2">
+                          <div className="flex flex-wrap items-center gap-2">
                             <p className="truncate text-sm font-semibold">{transaction.name}</p>
+                            <span
+                              className={`rounded px-1.5 py-0.5 text-[10px] font-semibold ${
+                                transaction.type === "Annex"
+                                  ? "bg-lime-soft text-lime-deep"
+                                  : "bg-blue-soft text-blue-deep"
+                              }`}
+                            >
+                              {transaction.type === "Annex" ? "Анекс" : "Фактура"}
+                            </span>
+                            {transaction.contractRef && (
+                              <span className="rounded bg-stone px-1.5 py-0.5 text-[10px] font-semibold text-muted">
+                                {transaction.contractRef}
+                              </span>
+                            )}
                             {timeScope === "yearly" && (
                               <span className="rounded bg-stone px-1.5 py-0.5 text-[10px] font-semibold text-muted">
                                 {transaction.quarter}
                               </span>
                             )}
                           </div>
-                          <p className="mt-1 text-xs text-muted">{transaction.time}</p>
+                          <div className="mt-0.5 flex items-center gap-2 text-xs text-muted">
+                            <span>{transaction.time}</span>
+                            <span>•</span>
+                            <span
+                              className={`font-semibold ${
+                                transaction.status === "Paid"
+                                  ? "text-lime-deep"
+                                  : transaction.status === "Approved"
+                                  ? "text-blue-deep"
+                                  : "text-peach-deep"
+                              }`}
+                            >
+                              {transaction.status === "Paid"
+                                ? "Исплатено"
+                                : transaction.status === "Approved"
+                                ? "Одобрено"
+                                : "Во обработка"}
+                            </span>
+                          </div>
                         </div>
-                        <p className="text-sm font-semibold">{transaction.amount}</p>
+                        <p
+                          className={`text-sm font-semibold ${
+                            transaction.type === "Annex" ? "text-lime-deep" : "text-ink"
+                          }`}
+                        >
+                          {transaction.amount}
+                        </p>
                       </div>
                     ))
                   )}
                 </div>
-              </section>
-            </>
-          )}
-
-          {activeTab === "Stats" && (
-            <div className="px-5">
-              <section>
-                <div className="flex items-end justify-between">
-                  <div>
-                    <p className="text-xs font-medium text-muted">Spending insights</p>
-                    <h2 className="mt-1 text-3xl font-semibold tracking-tight">$2,366.40</h2>
-                  </div>
-                  <Button className="flex items-center gap-2 rounded-full border border-line bg-white px-3 py-2 text-xs font-semibold shadow-sm">
-                    <Icon name="calendar" size={14} /> June
-                  </Button>
-                </div>
-                <p className="mt-2 text-sm text-muted">
-                  <span className="font-semibold text-lime-deep">8.4% less</span> than last month
-                </p>
-              </section>
-
-              <section className="mt-7 rounded-3xl border border-line bg-white p-5 shadow-card">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h3 className="font-semibold">Monthly spend</h3>
-                    <p className="mt-1 text-xs text-muted">June 1–20</p>
-                  </div>
-                  <div className="flex items-center gap-1.5 text-xs font-medium text-muted">
-                    <span className="size-2 rounded-full bg-lime" /> Daily
-                  </div>
-                </div>
-                <div className="mt-7 h-44">
-                  <svg className="h-full w-full overflow-visible" preserveAspectRatio="none" viewBox="0 0 340 170">
-                    <defs>
-                      <linearGradient id="mobileChart" x1="0" x2="0" y1="0" y2="1">
-                        <stop offset="0%" stopColor="var(--color-lime)" stopOpacity=".42" />
-                        <stop offset="100%" stopColor="var(--color-lime)" stopOpacity=".02" />
-                      </linearGradient>
-                    </defs>
-                    <path d="M0 145H340M0 102H340M0 59H340M0 16H340" fill="none" stroke="var(--color-line)" strokeDasharray="4 5" />
-                    <path d="M0 128 C28 120 35 70 70 88 S112 140 145 105 S178 36 212 63 S249 124 278 82 S315 50 340 25 V150 H0Z" fill="url(#mobileChart)" />
-                    <path d="M0 128 C28 120 35 70 70 88 S112 140 145 105 S178 36 212 63 S249 124 278 82 S315 50 340 25" fill="none" stroke="var(--color-ink)" strokeLinecap="round" strokeWidth="3" vectorEffect="non-scaling-stroke" />
-                    <circle cx="340" cy="25" fill="var(--color-lime)" r="5" stroke="var(--color-ink)" strokeWidth="2.5" vectorEffect="non-scaling-stroke" />
-                  </svg>
-                </div>
-                <div className="flex justify-between text-[10px] font-medium text-muted">
-                  <span>Jun 1</span><span>Jun 5</span><span>Jun 10</span><span>Jun 15</span><span>Jun 20</span>
-                </div>
-              </section>
-
-              <section className="mt-7">
-                <div className="flex items-center justify-between">
-                  <h3 className="text-lg font-semibold">By category</h3>
-                  <Button className="text-sm font-semibold text-lime-deep">See all</Button>
-                </div>
-                <div className="mt-4 space-y-3">
-                  {[
-                    { amount: "$1,240", icon: "home" as const, label: "Home", percent: "w-[82%]", tone: "bg-violet-soft text-violet-deep", bar: "bg-violet" },
-                    { amount: "$386", icon: "food" as const, label: "Food", percent: "w-[58%]", tone: "bg-lime-soft text-lime-deep", bar: "bg-lime" },
-                    { amount: "$148", icon: "transport" as const, label: "Travel", percent: "w-[36%]", tone: "bg-blue-soft text-blue-deep", bar: "bg-blue" },
-                    { amount: "$112", icon: "shopping" as const, label: "Shopping", percent: "w-[27%]", tone: "bg-peach-soft text-peach-deep", bar: "bg-peach" },
-                  ].map((item) => (
-                    <article className="rounded-2xl border border-line bg-white p-4 shadow-card" key={item.label}>
-                      <div className="flex items-center gap-3">
-                        <div className={`grid size-10 place-items-center rounded-xl ${item.tone}`}>
-                          <Icon name={item.icon} size={18} />
-                        </div>
-                        <div className="min-w-0 flex-1">
-                          <div className="flex items-center justify-between text-sm">
-                            <span className="font-semibold">{item.label}</span>
-                            <span className="font-semibold">{item.amount}</span>
-                          </div>
-                          <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-stone">
-                            <div className={`h-full rounded-full ${item.percent} ${item.bar}`} />
-                          </div>
-                        </div>
-                      </div>
-                    </article>
-                  ))}
-                </div>
-              </section>
+              </div>
             </div>
           )}
 
-          {activeTab === "Wallet" && (
-            <div className="px-5">
-              <section className="relative overflow-hidden rounded-3xl bg-lime p-6">
-                <div className="absolute -right-8 -top-12 size-36 rounded-full border-[20px] border-white/25" />
-                <div className="relative">
-                  <div className="flex items-center justify-between">
-                    <p className="text-sm font-semibold text-ink/60">Total balance</p>
-                    <div className="grid size-9 place-items-center rounded-full bg-white/45">
-                      <Icon name="wallet" size={17} />
-                    </div>
-                  </div>
-                  <p className="mt-5 text-4xl font-semibold tracking-tight">$12,842.60</p>
-                  <p className="mt-2 text-xs font-medium text-ink/55">Across 3 connected accounts</p>
-                </div>
-              </section>
-
-              <section className="mt-7">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h2 className="text-lg font-semibold">Your accounts</h2>
-                    <p className="mt-0.5 text-xs text-muted">Updated a moment ago</p>
-                  </div>
-                  <Button ariaLabel="Account options" className="text-muted"><Icon name="more" size={20} /></Button>
-                </div>
-                <div className="mt-4 space-y-3">
-                  {[
-                    { digits: "4821", label: "Everyday checking", amount: "$2,483.60", color: "bg-ink text-white" },
-                    { digits: "9034", label: "Rainy day savings", amount: "$8,240.00", color: "bg-blue-soft text-blue-deep" },
-                    { digits: "1168", label: "Travel fund", amount: "$2,119.00", color: "bg-violet-soft text-violet-deep" },
-                  ].map((account) => (
-                    <Button className="flex w-full items-center gap-4 rounded-2xl border border-line bg-white p-4 text-left shadow-card" key={account.digits}>
-                      <span className={`grid size-12 shrink-0 place-items-center rounded-2xl ${account.color}`}>
-                        <Icon name="wallet" size={19} />
-                      </span>
-                      <span className="min-w-0 flex-1">
-                        <span className="block truncate text-sm font-semibold">{account.label}</span>
-                        <span className="mt-1 block text-xs text-muted">•••• {account.digits}</span>
-                      </span>
-                      <span className="text-right">
-                        <span className="block text-sm font-semibold">{account.amount}</span>
-                        <span className="mt-1 flex justify-end text-muted"><Icon name="arrow" size={14} /></span>
-                      </span>
-                    </Button>
-                  ))}
-                </div>
-              </section>
-
-              <section className="mt-7">
-                <h2 className="text-lg font-semibold">Quick actions</h2>
-                <div className="mt-4 grid grid-cols-2 gap-3">
-                  <Button className="flex items-center gap-3 rounded-2xl border border-line bg-white p-4 text-sm font-semibold shadow-card">
-                    <span className="grid size-9 place-items-center rounded-xl bg-lime-soft text-lime-deep"><Icon name="plus" size={17} /></span>
-                    Add account
-                  </Button>
-                  <Button className="flex items-center gap-3 rounded-2xl border border-line bg-white p-4 text-sm font-semibold shadow-card">
-                    <span className="grid size-9 place-items-center rounded-xl bg-blue-soft text-blue-deep"><Icon name="chart" size={17} /></span>
-                    Statements
-                  </Button>
-                </div>
-              </section>
+          {activeTab === "Contracts" && (
+            <div className="mx-auto max-w-5xl space-y-6">
+              <div>
+                <h1 className="text-2xl font-bold tracking-tight">Contracts</h1>
+                <p className="mt-1 text-sm text-muted">Overview of active and archived service contracts.</p>
+              </div>
+              <div className="overflow-hidden rounded-3xl border border-line bg-white shadow-card">
+                <table className="w-full text-left text-sm">
+                  <thead className="border-b border-line bg-stone/50 text-xs font-semibold text-muted">
+                    <tr>
+                      <th className="px-6 py-4">Contract ID</th>
+                      <th className="px-6 py-4">Client / Vendor</th>
+                      <th className="px-6 py-4">Period</th>
+                      <th className="px-6 py-4">Status</th>
+                      <th className="px-6 py-4 text-right">Value</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-line">
+                    {[
+                      { id: "MDT-CTR-2026-001", client: "MDT Enterprise Solutions", period: "Jan 01, 2026 - Dec 31, 2026", status: "Active", value: "$48,000" },
+                      { id: "MDT-CTR-2026-002", client: "Gov Tech Consulting", period: "Mar 15, 2026 - Sep 15, 2026", status: "Active", value: "$32,500" },
+                      { id: "MDT-CTR-2025-084", client: "Nordic Data Labs", period: "Aug 01, 2025 - Feb 28, 2026", status: "Completed", value: "$18,200" },
+                    ].map((ctr) => (
+                      <tr className="hover:bg-stone/20 transition" key={ctr.id}>
+                        <td className="px-6 py-4 font-semibold">{ctr.id}</td>
+                        <td className="px-6 py-4 text-muted">{ctr.client}</td>
+                        <td className="px-6 py-4 text-xs text-muted">{ctr.period}</td>
+                        <td className="px-6 py-4">
+                          <span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${
+                            ctr.status === "Active" ? "bg-lime-soft text-lime-deep" : "bg-stone text-muted"
+                          }`}>
+                            {ctr.status}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4 text-right font-semibold">{ctr.value}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
           )}
-        </div>
 
-        <nav
-          aria-label="App navigation"
-          className="absolute inset-x-0 bottom-0 z-20 flex items-end justify-around border-t border-line bg-white/95 px-3 pb-5 pt-3 backdrop-blur-lg"
-        >
-          {[
-            { icon: "home" as const, label: "Home" },
-            { icon: "chart" as const, label: "Stats" },
-            { icon: "target" as const, label: "Budgets" },
-            { icon: "wallet" as const, label: "Wallet" },
-          ].map((item, index) => (
-            <div className="flex flex-1 justify-center" key={item.label}>
-              {index === 2 ? (
-                <Button
-                  ariaLabel="Add expense"
-                  className="-mt-9 grid size-14 place-items-center rounded-full border-4 border-canvas bg-lime text-ink shadow-lg shadow-ink/15 transition active:scale-95"
-                  onClick={() => setSheetOpen(true)}
-                >
-                  <Icon name="plus" size={23} />
-                </Button>
-              ) : (
-                <Button
-                  className={`flex min-w-14 flex-col items-center gap-1.5 text-[10px] font-semibold ${
-                    activeTab === item.label ? "text-ink" : "text-muted"
-                  }`}
-                  onClick={() => setActiveTab(item.label)}
-                >
-                  <span className={activeTab === item.label ? "text-lime-deep" : ""}>
-                    <Icon name={item.icon} size={20} />
-                  </span>
-                  {item.label}
-                </Button>
-              )}
+          {activeTab === "Invoices" && (
+            <div className="mx-auto max-w-5xl space-y-6">
+              <div>
+                <h1 className="text-2xl font-bold tracking-tight">Invoices</h1>
+                <p className="mt-1 text-sm text-muted">Manage issued and received invoices.</p>
+              </div>
+              <div className="overflow-hidden rounded-3xl border border-line bg-white shadow-card">
+                <table className="w-full text-left text-sm">
+                  <thead className="border-b border-line bg-stone/50 text-xs font-semibold text-muted">
+                    <tr>
+                      <th className="px-6 py-4">Invoice #</th>
+                      <th className="px-6 py-4">Client</th>
+                      <th className="px-6 py-4">Date</th>
+                      <th className="px-6 py-4">Due Date</th>
+                      <th className="px-6 py-4">Status</th>
+                      <th className="px-6 py-4 text-right">Amount</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-line">
+                    {[
+                      { id: "INV-2026-104", client: "MDT Enterprise Solutions", date: "Jun 01, 2026", dueDate: "Jun 30, 2026", status: "Paid", amount: "$4,000.00" },
+                      { id: "INV-2026-098", client: "Gov Tech Consulting", date: "May 15, 2026", dueDate: "Jun 15, 2026", status: "Paid", amount: "$8,125.00" },
+                      { id: "INV-2026-112", client: "Cloud Infrastructure Ltd", date: "Jun 18, 2026", dueDate: "Jul 18, 2026", status: "Pending", amount: "$2,450.00" },
+                    ].map((inv) => (
+                      <tr className="hover:bg-stone/20 transition" key={inv.id}>
+                        <td className="px-6 py-4 font-semibold">{inv.id}</td>
+                        <td className="px-6 py-4 text-muted">{inv.client}</td>
+                        <td className="px-6 py-4 text-xs text-muted">{inv.date}</td>
+                        <td className="px-6 py-4 text-xs text-muted">{inv.dueDate}</td>
+                        <td className="px-6 py-4">
+                          <span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${
+                            inv.status === "Paid" ? "bg-lime-soft text-lime-deep" : "bg-peach-soft text-peach-deep"
+                          }`}>
+                            {inv.status}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4 text-right font-semibold">{inv.amount}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
-          ))}
-        </nav>
+          )}
+        </main>
+      </div>
 
         {sheetOpen && (
           <div
@@ -926,27 +1016,27 @@ export default function App() {
 
               <div className="mt-5 grid grid-cols-2 gap-3">
                 <div className="rounded-2xl border border-line bg-stone/50 p-4">
-                  <p className="text-xs font-medium text-muted">Total Budget Limit</p>
+                  <p className="text-xs font-medium text-muted">Вкупен Одобрен Буџет</p>
                   <p className="mt-1 text-xl font-semibold tracking-tight">
-                    {timeScope === "yearly" ? "$56,000" : "$3,372.40"}
+                    {timeScope === "yearly" ? `$${totalApprovedBudget.toLocaleString("en-US")}` : "$48,500.00"}
                   </p>
                 </div>
                 <div className="rounded-2xl border border-line bg-stone/50 p-4">
-                  <p className="text-xs font-medium text-muted">Remaining Balance</p>
+                  <p className="text-xs font-medium text-muted">Преостанат Буџет за Реализација</p>
                   <p className="mt-1 text-xl font-semibold tracking-tight text-lime-deep">
-                    {timeScope === "yearly" ? "$27,610.00" : "$1,006.40"}
+                    {timeScope === "yearly" ? `$${remainingContractBudget.toLocaleString("en-US", { minimumFractionDigits: 2 })}` : "$27,800.00"}
                   </p>
                 </div>
               </div>
 
               <div className="mt-5 rounded-2xl border border-line p-4">
-                <h3 className="text-sm font-semibold">Category Allowances</h3>
+                <h3 className="text-sm font-semibold">Алокација по типови на договори и услуги</h3>
                 <div className="mt-3 space-y-3">
                   {[
-                    { label: "Home & Rent", limit: timeScope === "yearly" ? "$18,000" : "$1,500", spent: timeScope === "yearly" ? "$14,880" : "$1,240", pct: "82%", bar: "bg-violet" },
-                    { label: "Food & Groceries", limit: timeScope === "yearly" ? "$6,000" : "$500", spent: timeScope === "yearly" ? "$4,632" : "$386", pct: "77%", bar: "bg-lime" },
-                    { label: "Transport & Travel", limit: timeScope === "yearly" ? "$4,000" : "$300", spent: timeScope === "yearly" ? "$3,850" : "$148", pct: "49%", bar: "bg-blue" },
-                    { label: "Shopping & Lifestyle", limit: timeScope === "yearly" ? "$3,000" : "$250", spent: timeScope === "yearly" ? "$2,428" : "$112", pct: "37%", bar: "bg-peach" },
+                    { label: "Софтвер и Развој (Договори)", limit: timeScope === "yearly" ? "$145,000" : "$25,000", spent: timeScope === "yearly" ? "$78,500" : "$12,400", pct: "54%", bar: "bg-blue" },
+                    { label: "Анекси кон активни договори", limit: timeScope === "yearly" ? "$25,500" : "$8,000", spent: timeScope === "yearly" ? "$20,500" : "$5,200", pct: "80%", bar: "bg-lime" },
+                    { label: "IT Консалтинг & Лиценци", limit: timeScope === "yearly" ? "$85,000" : "$10,500", spent: timeScope === "yearly" ? "$40,200" : "$6,200", pct: "47%", bar: "bg-violet" },
+                    { label: "Одржување & Cloud Сервиси", limit: timeScope === "yearly" ? "$50,000" : "$5,000", spent: timeScope === "yearly" ? "$24,300" : "$2,450", pct: "49%", bar: "bg-peach" },
                   ].map((cat) => (
                     <div key={cat.label}>
                       <div className="flex justify-between text-xs">
@@ -963,8 +1053,8 @@ export default function App() {
 
               <div className="mt-4 rounded-2xl bg-lime-soft p-4 text-xs leading-relaxed text-lime-deep">
                 {timeScope === "yearly"
-                  ? "💡 Tip: You are on track! Projected end-of-year savings estimate is ~$12,400 if current pace continues."
-                  : "💡 Tip: You have 12 days remaining in your June cycle with $1,006.40 left. Safe daily spend is ~$83.80."}
+                  ? "💡 Инфо: Реализацијата на договорите се одвива според планираната динамика. Вкупно 3 активни анекси го зголемија основниот буџет за $25,500."
+                  : "💡 Инфо: За тековниот месец се реализирани фактури во износ од $20,700 од вкупно планирани $48,500."}
               </div>
 
               <Button
@@ -1092,7 +1182,6 @@ export default function App() {
             </section>
           </div>
         )}
-      </main>
     </div>
   );
 }

@@ -399,95 +399,160 @@ export default function App() {
 
   return (
     <div className="flex h-screen w-screen flex-col overflow-hidden bg-canvas text-ink font-sans">
-      {/* Top Header matching wireframe template */}
-      <header className="flex h-16 shrink-0 items-center justify-between border-b-2 border-ink bg-white px-6">
-        <div className="flex items-center gap-3">
-          <img src={mdtLogo} alt="Logo MDT" className="h-11 w-auto max-w-[200px] object-contain" />
+      {/* Top Header without black lines - responsive for mobile & desktop */}
+      <header className="flex h-14 sm:h-16 shrink-0 items-center justify-between border-b border-line bg-white px-3 sm:px-6 shadow-xs">
+        <div className="flex items-center gap-2 sm:gap-3">
+          <img src={mdtLogo} alt="Logo MDT" className="h-8 sm:h-10 w-auto max-w-[130px] sm:max-w-[190px] object-contain" />
         </div>
-        <div className="flex items-center gap-5">
-          <div className="flex items-center gap-2.5">
-            <div className="grid size-9 place-items-center rounded-full bg-peach-soft text-xs font-bold text-peach-deep">
+        <div className="flex items-center gap-2 sm:gap-4">
+          <div className="flex items-center gap-2">
+            <div className="grid size-8 sm:size-9 place-items-center rounded-full bg-peach-soft text-xs font-bold text-peach-deep shrink-0">
               КП
             </div>
-            <div>
-              <p className="text-sm font-semibold text-ink">Кристијан Пешевски</p>
-            </div>
+            <p className="hidden sm:block text-xs sm:text-sm font-semibold text-ink truncate max-w-[140px]">
+              Кристијан Пешевски
+            </p>
           </div>
           <button
-            className="flex items-center gap-1.5 rounded-xl border border-line bg-stone px-3.5 py-1.5 text-xs font-semibold text-ink transition hover:border-peach-deep hover:bg-peach-soft hover:text-peach-deep cursor-pointer"
+            className="flex items-center gap-1 sm:gap-1.5 rounded-xl border border-line bg-stone px-2.5 sm:px-3.5 py-1.5 text-xs font-semibold text-ink transition hover:border-peach-deep hover:bg-peach-soft hover:text-peach-deep cursor-pointer"
             onClick={() => alert("Одјавени сте успешно")}
+            title="Одјави се"
             type="button"
           >
-            <Icon name="logout" size={15} />
-            Одјави се
+            <Icon name="logout" size={14} />
+            <span className="text-[11px] sm:text-xs">Одјави се</span>
           </button>
         </div>
       </header>
 
-      {/* Main Body: Left Sidebar + Right Content Area */}
-      <div className="flex flex-1 overflow-hidden">
-        {/* Left Sidebar matching wireframe */}
-        <aside className="flex w-60 md:w-64 shrink-0 flex-col border-r-2 border-ink bg-white p-4">
+      {/* Main Body: Hover-expanding Left Sidebar + Right Content Area */}
+      <div className="flex flex-1 overflow-hidden relative">
+        {/* Left Sidebar on desktop - collapsed by default showing ONLY buttons, opens only on hover */}
+        <aside className="group relative z-30 hidden sm:flex shrink-0 flex-col border-r border-line bg-white p-2.5 transition-[width] duration-300 ease-in-out w-16 hover:w-60 md:hover:w-64 shadow-xs hover:shadow-xl">
           <nav className="space-y-1.5">
             <button
-              className={`flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold transition cursor-pointer ${
+              className={`flex w-full items-center rounded-xl p-3 text-sm font-semibold transition cursor-pointer overflow-hidden whitespace-nowrap ${
                 activeTab === "Home"
                   ? "bg-lime-soft text-lime-deep shadow-sm"
                   : "text-muted hover:bg-stone hover:text-ink"
               }`}
               onClick={() => setActiveTab("Home")}
+              title="Home / Overview"
               type="button"
             >
-              <Icon name="home" size={18} />
-              Home / Overview
+              <span className="shrink-0 flex items-center justify-center">
+                <Icon name="home" size={20} />
+              </span>
+              <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 overflow-hidden whitespace-nowrap ml-3 text-sm font-semibold">
+                Home / Overview
+              </span>
             </button>
             <button
-              className={`flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold transition cursor-pointer ${
+              className={`flex w-full items-center rounded-xl p-3 text-sm font-semibold transition cursor-pointer overflow-hidden whitespace-nowrap ${
                 activeTab === "Contracts"
                   ? "bg-lime-soft text-lime-deep shadow-sm"
                   : "text-muted hover:bg-stone hover:text-ink"
               }`}
               onClick={() => setActiveTab("Contracts")}
+              title="Contracts"
               type="button"
             >
-              <Icon name="file" size={18} />
-              Contracts
+              <span className="shrink-0 flex items-center justify-center">
+                <Icon name="file" size={20} />
+              </span>
+              <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 overflow-hidden whitespace-nowrap ml-3 text-sm font-semibold">
+                Contracts
+              </span>
             </button>
             <button
-              className={`flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold transition cursor-pointer ${
+              className={`flex w-full items-center rounded-xl p-3 text-sm font-semibold transition cursor-pointer overflow-hidden whitespace-nowrap ${
                 activeTab === "Invoices"
                   ? "bg-lime-soft text-lime-deep shadow-sm"
                   : "text-muted hover:bg-stone hover:text-ink"
               }`}
               onClick={() => setActiveTab("Invoices")}
+              title="Invoices"
               type="button"
             >
-              <Icon name="wallet" size={18} />
-              Invoices
+              <span className="shrink-0 flex items-center justify-center">
+                <Icon name="wallet" size={20} />
+              </span>
+              <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 overflow-hidden whitespace-nowrap ml-3 text-sm font-semibold">
+                Invoices
+              </span>
             </button>
           </nav>
 
-          <div className="mt-auto border-t border-line pt-4">
+          <div className="mt-auto border-t border-line pt-3">
             <button
-              className="flex w-full items-center justify-center gap-2 rounded-xl bg-ink py-2.5 text-xs font-semibold text-white shadow-sm hover:bg-ink-soft cursor-pointer transition active:scale-95"
+              className="flex w-full items-center rounded-xl bg-ink p-3 text-xs font-semibold text-white shadow-sm hover:bg-ink-soft cursor-pointer transition active:scale-95 overflow-hidden whitespace-nowrap"
               onClick={() => setSheetOpen(true)}
+              title="Add Expense"
               type="button"
             >
-              <Icon name="plus" size={15} />
-              Add Expense
+              <span className="shrink-0 flex items-center justify-center">
+                <Icon name="plus" size={18} />
+              </span>
+              <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 overflow-hidden whitespace-nowrap ml-2 text-xs font-semibold">
+                Add Expense
+              </span>
             </button>
           </div>
         </aside>
 
-        {/* Right Main Screen Content Area */}
-        <main className="flex-1 overflow-y-auto bg-canvas p-6 md:p-8">
+        {/* Mobile Bottom Navigation Bar - only buttons visible for mobile phone view */}
+        <nav className="fixed bottom-0 inset-x-0 z-40 flex sm:hidden items-center justify-around border-t border-line bg-white/95 px-2 py-2 backdrop-blur-md shadow-lg">
+          <button
+            className={`flex flex-col items-center gap-1 rounded-xl px-3 py-1.5 text-[10px] font-semibold transition cursor-pointer ${
+              activeTab === "Home" ? "text-lime-deep" : "text-muted"
+            }`}
+            onClick={() => setActiveTab("Home")}
+            type="button"
+          >
+            <Icon name="home" size={20} />
+            <span>Home</span>
+          </button>
+          <button
+            className={`flex flex-col items-center gap-1 rounded-xl px-3 py-1.5 text-[10px] font-semibold transition cursor-pointer ${
+              activeTab === "Contracts" ? "text-lime-deep" : "text-muted"
+            }`}
+            onClick={() => setActiveTab("Contracts")}
+            type="button"
+          >
+            <Icon name="file" size={20} />
+            <span>Contracts</span>
+          </button>
+          <button
+            className={`flex flex-col items-center gap-1 rounded-xl px-3 py-1.5 text-[10px] font-semibold transition cursor-pointer ${
+              activeTab === "Invoices" ? "text-lime-deep" : "text-muted"
+            }`}
+            onClick={() => setActiveTab("Invoices")}
+            type="button"
+          >
+            <Icon name="wallet" size={20} />
+            <span>Invoices</span>
+          </button>
+          <button
+            className="flex flex-col items-center gap-1 rounded-xl px-3 py-1.5 text-[10px] font-semibold text-ink transition cursor-pointer"
+            onClick={() => setSheetOpen(true)}
+            type="button"
+          >
+            <div className="grid size-6 place-items-center rounded-full bg-lime text-ink">
+              <Icon name="plus" size={14} />
+            </div>
+            <span>Add</span>
+          </button>
+        </nav>
+
+        {/* Right Main Screen Content Area - fully responsive on phone and desktop */}
+        <main className="flex-1 overflow-y-auto bg-canvas p-3 sm:p-6 md:p-8 pb-24 sm:pb-8">
           {activeTab === "Home" && (
-            <div className="mx-auto max-w-6xl space-y-6">
+            <div className="mx-auto max-w-6xl space-y-4 sm:space-y-6">
               {/* Header with Title and Period Switcher */}
-              <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <div>
-                  <h1 className="text-2xl font-bold tracking-tight text-ink">Financial Dashboard</h1>
-                  <p className="mt-1 text-sm text-muted">
+                  <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-ink">Financial Dashboard</h1>
+                  <p className="mt-0.5 text-xs sm:text-sm text-muted">
                     Track your annual budget, cash flow, and transaction activity.
                   </p>
                 </div>
@@ -495,7 +560,7 @@ export default function App() {
                 {/* Period Switcher (Monthly vs Yearly) */}
                 <div className="flex items-center rounded-2xl bg-stone p-1 w-full sm:w-auto">
                   <button
-                    className={`flex-1 sm:flex-initial rounded-xl px-4 py-2 text-xs font-semibold transition cursor-pointer ${
+                    className={`flex-1 sm:flex-initial rounded-xl px-3 sm:px-4 py-1.5 sm:py-2 text-[11px] sm:text-xs font-semibold transition cursor-pointer ${
                       timeScope === "monthly"
                         ? "bg-white text-ink shadow-sm"
                         : "text-muted hover:text-ink"
@@ -506,7 +571,7 @@ export default function App() {
                     Monthly (June)
                   </button>
                   <button
-                    className={`flex-1 sm:flex-initial rounded-xl px-4 py-2 text-xs font-semibold transition cursor-pointer ${
+                    className={`flex-1 sm:flex-initial rounded-xl px-3 sm:px-4 py-1.5 sm:py-2 text-[11px] sm:text-xs font-semibold transition cursor-pointer ${
                       timeScope === "yearly"
                         ? "bg-white text-ink shadow-sm"
                         : "text-muted hover:text-ink"
@@ -520,9 +585,9 @@ export default function App() {
               </div>
 
               {/* Grid with Balance Card & Budget Pace */}
-              <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+              <div className="grid grid-cols-1 gap-4 sm:gap-6 lg:grid-cols-2">
                 {/* Balance Card */}
-                <div className="relative overflow-hidden rounded-3xl bg-ink p-6 text-white shadow-lg shadow-ink/15">
+                <div className="relative overflow-hidden rounded-3xl bg-ink p-4 sm:p-6 text-white shadow-lg shadow-ink/15">
                   <div className="absolute -right-10 -top-14 size-44 rounded-full border-[22px] border-lime/10" />
                   <div className="absolute -bottom-20 right-12 size-36 rounded-full bg-lime/5" />
                   <div className="relative">
@@ -814,89 +879,147 @@ export default function App() {
           )}
 
           {activeTab === "Contracts" && (
-            <div className="mx-auto max-w-5xl space-y-6">
+            <div className="mx-auto max-w-5xl space-y-4 sm:space-y-6">
               <div>
-                <h1 className="text-2xl font-bold tracking-tight">Contracts</h1>
-                <p className="mt-1 text-sm text-muted">Overview of active and archived service contracts.</p>
+                <h1 className="text-xl sm:text-2xl font-bold tracking-tight">Contracts</h1>
+                <p className="mt-0.5 text-xs sm:text-sm text-muted">Overview of active and archived service contracts.</p>
               </div>
-              <div className="overflow-hidden rounded-3xl border border-line bg-white shadow-card">
-                <table className="w-full text-left text-sm">
-                  <thead className="border-b border-line bg-stone/50 text-xs font-semibold text-muted">
-                    <tr>
-                      <th className="px-6 py-4">Contract ID</th>
-                      <th className="px-6 py-4">Client / Vendor</th>
-                      <th className="px-6 py-4">Period</th>
-                      <th className="px-6 py-4">Status</th>
-                      <th className="px-6 py-4 text-right">Value</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-line">
-                    {[
-                      { id: "MDT-CTR-2026-001", client: "MDT Enterprise Solutions", period: "Jan 01, 2026 - Dec 31, 2026", status: "Active", value: "$48,000" },
-                      { id: "MDT-CTR-2026-002", client: "Gov Tech Consulting", period: "Mar 15, 2026 - Sep 15, 2026", status: "Active", value: "$32,500" },
-                      { id: "MDT-CTR-2025-084", client: "Nordic Data Labs", period: "Aug 01, 2025 - Feb 28, 2026", status: "Completed", value: "$18,200" },
-                    ].map((ctr) => (
-                      <tr className="hover:bg-stone/20 transition" key={ctr.id}>
-                        <td className="px-6 py-4 font-semibold">{ctr.id}</td>
-                        <td className="px-6 py-4 text-muted">{ctr.client}</td>
-                        <td className="px-6 py-4 text-xs text-muted">{ctr.period}</td>
-                        <td className="px-6 py-4">
-                          <span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${
-                            ctr.status === "Active" ? "bg-lime-soft text-lime-deep" : "bg-stone text-muted"
-                          }`}>
-                            {ctr.status}
-                          </span>
-                        </td>
-                        <td className="px-6 py-4 text-right font-semibold">{ctr.value}</td>
+
+              {/* Mobile Card View on phones */}
+              <div className="sm:hidden space-y-3">
+                {[
+                  { id: "MDT-CTR-2026-001", client: "MDT Enterprise Solutions", period: "Jan 01, 2026 - Dec 31, 2026", status: "Active", value: "$48,000" },
+                  { id: "MDT-CTR-2026-002", client: "Gov Tech Consulting", period: "Mar 15, 2026 - Sep 15, 2026", status: "Active", value: "$32,500" },
+                  { id: "MDT-CTR-2025-084", client: "Nordic Data Labs", period: "Aug 01, 2025 - Feb 28, 2026", status: "Completed", value: "$18,200" },
+                ].map((ctr) => (
+                  <div key={ctr.id} className="rounded-2xl border border-line bg-white p-4 shadow-sm space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="font-semibold text-sm">{ctr.id}</span>
+                      <span className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${
+                        ctr.status === "Active" ? "bg-lime-soft text-lime-deep" : "bg-stone text-muted"
+                      }`}>
+                        {ctr.status}
+                      </span>
+                    </div>
+                    <p className="text-xs text-muted truncate">{ctr.client}</p>
+                    <div className="flex items-center justify-between pt-1 border-t border-line text-xs">
+                      <span className="text-[11px] text-muted">{ctr.period}</span>
+                      <span className="font-bold text-sm text-ink">{ctr.value}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Tablet & Desktop Table View */}
+              <div className="hidden sm:block overflow-hidden rounded-3xl border border-line bg-white shadow-card">
+                <div className="overflow-x-auto [scrollbar-width:thin]">
+                  <table className="w-full text-left text-sm min-w-[500px]">
+                    <thead className="border-b border-line bg-stone/50 text-xs font-semibold text-muted">
+                      <tr>
+                        <th className="px-6 py-4">Contract ID</th>
+                        <th className="px-6 py-4">Client / Vendor</th>
+                        <th className="px-6 py-4">Period</th>
+                        <th className="px-6 py-4">Status</th>
+                        <th className="px-6 py-4 text-right">Value</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody className="divide-y divide-line">
+                      {[
+                        { id: "MDT-CTR-2026-001", client: "MDT Enterprise Solutions", period: "Jan 01, 2026 - Dec 31, 2026", status: "Active", value: "$48,000" },
+                        { id: "MDT-CTR-2026-002", client: "Gov Tech Consulting", period: "Mar 15, 2026 - Sep 15, 2026", status: "Active", value: "$32,500" },
+                        { id: "MDT-CTR-2025-084", client: "Nordic Data Labs", period: "Aug 01, 2025 - Feb 28, 2026", status: "Completed", value: "$18,200" },
+                      ].map((ctr) => (
+                        <tr className="hover:bg-stone/20 transition" key={ctr.id}>
+                          <td className="px-6 py-4 font-semibold">{ctr.id}</td>
+                          <td className="px-6 py-4 text-muted">{ctr.client}</td>
+                          <td className="px-6 py-4 text-xs text-muted">{ctr.period}</td>
+                          <td className="px-6 py-4">
+                            <span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${
+                              ctr.status === "Active" ? "bg-lime-soft text-lime-deep" : "bg-stone text-muted"
+                            }`}>
+                              {ctr.status}
+                            </span>
+                          </td>
+                          <td className="px-6 py-4 text-right font-semibold">{ctr.value}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </div>
           )}
 
           {activeTab === "Invoices" && (
-            <div className="mx-auto max-w-5xl space-y-6">
+            <div className="mx-auto max-w-5xl space-y-4 sm:space-y-6">
               <div>
-                <h1 className="text-2xl font-bold tracking-tight">Invoices</h1>
-                <p className="mt-1 text-sm text-muted">Manage issued and received invoices.</p>
+                <h1 className="text-xl sm:text-2xl font-bold tracking-tight">Invoices</h1>
+                <p className="mt-0.5 text-xs sm:text-sm text-muted">Manage issued and received invoices.</p>
               </div>
-              <div className="overflow-hidden rounded-3xl border border-line bg-white shadow-card">
-                <table className="w-full text-left text-sm">
-                  <thead className="border-b border-line bg-stone/50 text-xs font-semibold text-muted">
-                    <tr>
-                      <th className="px-6 py-4">Invoice #</th>
-                      <th className="px-6 py-4">Client</th>
-                      <th className="px-6 py-4">Date</th>
-                      <th className="px-6 py-4">Due Date</th>
-                      <th className="px-6 py-4">Status</th>
-                      <th className="px-6 py-4 text-right">Amount</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-line">
-                    {[
-                      { id: "INV-2026-104", client: "MDT Enterprise Solutions", date: "Jun 01, 2026", dueDate: "Jun 30, 2026", status: "Paid", amount: "$4,000.00" },
-                      { id: "INV-2026-098", client: "Gov Tech Consulting", date: "May 15, 2026", dueDate: "Jun 15, 2026", status: "Paid", amount: "$8,125.00" },
-                      { id: "INV-2026-112", client: "Cloud Infrastructure Ltd", date: "Jun 18, 2026", dueDate: "Jul 18, 2026", status: "Pending", amount: "$2,450.00" },
-                    ].map((inv) => (
-                      <tr className="hover:bg-stone/20 transition" key={inv.id}>
-                        <td className="px-6 py-4 font-semibold">{inv.id}</td>
-                        <td className="px-6 py-4 text-muted">{inv.client}</td>
-                        <td className="px-6 py-4 text-xs text-muted">{inv.date}</td>
-                        <td className="px-6 py-4 text-xs text-muted">{inv.dueDate}</td>
-                        <td className="px-6 py-4">
-                          <span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${
-                            inv.status === "Paid" ? "bg-lime-soft text-lime-deep" : "bg-peach-soft text-peach-deep"
-                          }`}>
-                            {inv.status}
-                          </span>
-                        </td>
-                        <td className="px-6 py-4 text-right font-semibold">{inv.amount}</td>
+
+              {/* Mobile Card View on phones */}
+              <div className="sm:hidden space-y-3">
+                {[
+                  { id: "INV-2026-104", client: "MDT Enterprise Solutions", date: "Jun 01, 2026", dueDate: "Jun 30, 2026", status: "Paid", amount: "$4,000.00" },
+                  { id: "INV-2026-098", client: "Gov Tech Consulting", date: "May 15, 2026", dueDate: "Jun 15, 2026", status: "Paid", amount: "$8,125.00" },
+                  { id: "INV-2026-112", client: "Cloud Infrastructure Ltd", date: "Jun 18, 2026", dueDate: "Jul 18, 2026", status: "Pending", amount: "$2,450.00" },
+                ].map((inv) => (
+                  <div key={inv.id} className="rounded-2xl border border-line bg-white p-4 shadow-sm space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="font-semibold text-sm">{inv.id}</span>
+                      <span className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${
+                        inv.status === "Paid" ? "bg-lime-soft text-lime-deep" : "bg-peach-soft text-peach-deep"
+                      }`}>
+                        {inv.status}
+                      </span>
+                    </div>
+                    <p className="text-xs text-muted truncate">{inv.client}</p>
+                    <div className="flex items-center justify-between pt-1 border-t border-line text-xs">
+                      <span className="text-[11px] text-muted">Доспева: {inv.dueDate}</span>
+                      <span className="font-bold text-sm text-ink">{inv.amount}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Tablet & Desktop Table View */}
+              <div className="hidden sm:block overflow-hidden rounded-3xl border border-line bg-white shadow-card">
+                <div className="overflow-x-auto [scrollbar-width:thin]">
+                  <table className="w-full text-left text-sm min-w-[500px]">
+                    <thead className="border-b border-line bg-stone/50 text-xs font-semibold text-muted">
+                      <tr>
+                        <th className="px-6 py-4">Invoice #</th>
+                        <th className="px-6 py-4">Client</th>
+                        <th className="px-6 py-4">Date</th>
+                        <th className="px-6 py-4">Due Date</th>
+                        <th className="px-6 py-4">Status</th>
+                        <th className="px-6 py-4 text-right">Amount</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody className="divide-y divide-line">
+                      {[
+                        { id: "INV-2026-104", client: "MDT Enterprise Solutions", date: "Jun 01, 2026", dueDate: "Jun 30, 2026", status: "Paid", amount: "$4,000.00" },
+                        { id: "INV-2026-098", client: "Gov Tech Consulting", date: "May 15, 2026", dueDate: "Jun 15, 2026", status: "Paid", amount: "$8,125.00" },
+                        { id: "INV-2026-112", client: "Cloud Infrastructure Ltd", date: "Jun 18, 2026", dueDate: "Jul 18, 2026", status: "Pending", amount: "$2,450.00" },
+                      ].map((inv) => (
+                        <tr className="hover:bg-stone/20 transition" key={inv.id}>
+                          <td className="px-6 py-4 font-semibold">{inv.id}</td>
+                          <td className="px-6 py-4 text-muted">{inv.client}</td>
+                          <td className="px-6 py-4 text-xs text-muted">{inv.date}</td>
+                          <td className="px-6 py-4 text-xs text-muted">{inv.dueDate}</td>
+                          <td className="px-6 py-4">
+                            <span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${
+                              inv.status === "Paid" ? "bg-lime-soft text-lime-deep" : "bg-peach-soft text-peach-deep"
+                            }`}>
+                              {inv.status}
+                            </span>
+                          </td>
+                          <td className="px-6 py-4 text-right font-semibold">{inv.amount}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </div>
           )}

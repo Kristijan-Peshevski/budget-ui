@@ -142,6 +142,7 @@ function Button({
 interface TransactionItem {
   id: string;
   name: string;
+  category?: string;
   contractRef?: string;
   type: "Invoice" | "Annex" | "Contract";
   amount: string;
@@ -162,6 +163,7 @@ const initialTransactions: TransactionItem[] = [
     rawAmount: 14500,
     icon: "file",
     name: "Фактура #INV-2026-041 (Cloud Infrastructure)",
+    category: "ИТ и Софтвер",
     contractRef: "CTR-2026-001",
     type: "Invoice",
     time: "Today, 10:42 AM",
@@ -177,6 +179,7 @@ const initialTransactions: TransactionItem[] = [
     rawAmount: 8000,
     icon: "chart",
     name: "Анекс #1 кон Договор за Развој",
+    category: "ИТ и Софтвер",
     contractRef: "CTR-2026-002",
     type: "Annex",
     time: "Yesterday, 3:15 PM",
@@ -192,6 +195,7 @@ const initialTransactions: TransactionItem[] = [
     rawAmount: 6200,
     icon: "wallet",
     name: "Фактура #INV-2026-039 (IT Консалтинг)",
+    category: "Консалтинг",
     contractRef: "CTR-2026-002",
     type: "Invoice",
     time: "Jun 18, 2:30 PM",
@@ -205,8 +209,9 @@ const initialTransactions: TransactionItem[] = [
     id: "tx-4",
     amount: "−$18,900.00",
     rawAmount: 18900,
-    icon: "file",
+    icon: "target",
     name: "Фактура #INV-2026-034 (Серверска Опрема)",
+    category: "Опрема",
     contractRef: "CTR-2026-001",
     type: "Invoice",
     time: "May 24, 11:15 AM",
@@ -222,6 +227,7 @@ const initialTransactions: TransactionItem[] = [
     rawAmount: 12500,
     icon: "chart",
     name: "Анекс #2 - Дополнителни Модули",
+    category: "ИТ и Софтвер",
     contractRef: "CTR-2026-003",
     type: "Annex",
     time: "May 12, 4:20 PM",
@@ -235,15 +241,16 @@ const initialTransactions: TransactionItem[] = [
     id: "tx-6",
     amount: "−$9,800.00",
     rawAmount: 9800,
-    icon: "wallet",
+    icon: "chart",
     name: "Фактура #INV-2026-028 (Q2 Одржување)",
+    category: "Одржување",
     contractRef: "CTR-2026-003",
     type: "Invoice",
     time: "Apr 04, 9:00 AM",
     month: "Apr",
     year: 2026,
     quarter: "Q2",
-    tone: "bg-blue-soft text-blue-deep",
+    tone: "bg-lime-soft text-lime-deep",
     status: "Paid",
   },
   {
@@ -252,13 +259,14 @@ const initialTransactions: TransactionItem[] = [
     rawAmount: 24000,
     icon: "file",
     name: "Фактура #INV-2026-019 (Софтверски Лиценци)",
+    category: "ИТ и Софтвер",
     contractRef: "CTR-2026-004",
     type: "Invoice",
     time: "Mar 19, 1:45 PM",
     month: "Mar",
     year: 2026,
     quarter: "Q1",
-    tone: "bg-violet-soft text-violet-deep",
+    tone: "bg-blue-soft text-blue-deep",
     status: "Paid",
   },
   {
@@ -267,13 +275,14 @@ const initialTransactions: TransactionItem[] = [
     rawAmount: 15500,
     icon: "wallet",
     name: "Фактура #INV-2026-011 (Безбедносен Аудит)",
+    category: "Консалтинг",
     contractRef: "CTR-2026-005",
     type: "Invoice",
     time: "Feb 14, 7:30 PM",
     month: "Feb",
     year: 2026,
     quarter: "Q1",
-    tone: "bg-peach-soft text-peach-deep",
+    tone: "bg-violet-soft text-violet-deep",
     status: "Paid",
   },
   {
@@ -282,6 +291,7 @@ const initialTransactions: TransactionItem[] = [
     rawAmount: 32000,
     icon: "file",
     name: "Фактура #INV-2026-004 (Прва рата Договор за Развој)",
+    category: "ИТ и Софтвер",
     contractRef: "CTR-2026-002",
     type: "Invoice",
     time: "Jan 15, 10:00 AM",
@@ -297,6 +307,7 @@ const initialTransactions: TransactionItem[] = [
     rawAmount: 5000,
     icon: "chart",
     name: "Анекс #1 - Продолжување рок",
+    category: "Консалтинг",
     contractRef: "CTR-2026-005",
     type: "Annex",
     time: "Jan 08, 2:00 PM",
@@ -332,27 +343,35 @@ export default function App() {
   const [txSearchQuery, setTxSearchQuery] = useState("");
   const [txCategoryFilter, setTxCategoryFilter] = useState("All");
   const [saved, setSaved] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState("Food");
+  const [selectedCategory, setSelectedCategory] = useState("ИТ и Софтвер");
+  const [procurementDesc, setProcurementDesc] = useState("");
+  const [contractRefInput, setContractRefInput] = useState("");
   const [expenseAmount, setExpenseAmount] = useState("0.00");
   const [transactionItems, setTransactionItems] = useState<TransactionItem[]>(initialTransactions);
 
   const saveExpense = () => {
-    const categoryDetails = {
-      Food: { icon: "food" as const, tone: "bg-lime-soft text-lime-deep" },
-      Travel: { icon: "transport" as const, tone: "bg-blue-soft text-blue-deep" },
-      Shop: { icon: "shopping" as const, tone: "bg-peach-soft text-peach-deep" },
-      Home: { icon: "home" as const, tone: "bg-violet-soft text-violet-deep" },
+    const categoryDetails: Record<string, { icon: IconName; tone: string }> = {
+      "ИТ и Софтвер": { icon: "file", tone: "bg-blue-soft text-blue-deep" },
+      "Опрема": { icon: "target", tone: "bg-peach-soft text-peach-deep" },
+      "Консалтинг": { icon: "wallet", tone: "bg-violet-soft text-violet-deep" },
+      "Одржување": { icon: "chart", tone: "bg-lime-soft text-lime-deep" },
     };
-    const detail = categoryDetails[selectedCategory as keyof typeof categoryDetails];
+    const detail = categoryDetails[selectedCategory] || { icon: "file" as IconName, tone: "bg-blue-soft text-blue-deep" };
     const parsedAmount = Number(expenseAmount || 0);
     const formattedAmount = parsedAmount.toFixed(2);
+
+    const displayName = procurementDesc.trim() !== "" 
+      ? `Фактура - ${procurementDesc.trim()} (${selectedCategory})` 
+      : `Фактура - Јавна набавка (${selectedCategory})`;
 
     const newTx: TransactionItem = {
       id: `tx-${Date.now()}`,
       amount: `−$${formattedAmount}`,
       rawAmount: parsedAmount,
       icon: detail.icon,
-      name: `Фактура - ${selectedCategory}`,
+      name: displayName,
+      category: selectedCategory,
+      contractRef: contractRefInput.trim() || undefined,
       type: "Invoice",
       time: "Today, Just now",
       month: "Jun",
@@ -368,6 +387,8 @@ export default function App() {
       setSheetOpen(false);
       setSaved(false);
       setExpenseAmount("0.00");
+      setProcurementDesc("");
+      setContractRefInput("");
       setActiveTab("Home");
     }, 850);
   };
@@ -1033,71 +1054,116 @@ export default function App() {
             role="presentation"
           >
             <section
-              aria-label="Add expense"
+              aria-label="Евидентирај набавка"
               aria-modal="true"
-              className="w-full rounded-t-[2rem] bg-white p-5 pb-8 shadow-modal"
+              className="w-full rounded-t-[2rem] bg-white p-5 pb-8 shadow-modal max-h-[90vh] overflow-y-auto"
               onMouseDown={(event) => event.stopPropagation()}
               role="dialog"
             >
               <div className="mx-auto mb-5 h-1 w-10 rounded-full bg-line" />
               <div className="flex items-start justify-between">
                 <div>
-                  <h2 className="text-xl font-semibold">Add expense</h2>
-                  <p className="mt-1 text-sm text-muted">Keep your budget up to date.</p>
+                  <h2 className="text-xl font-semibold">Евидентирај набавка / фактура</h2>
+                  <p className="mt-1 text-sm text-muted">Внесете податоци за новата јавна набавка или фактура.</p>
                 </div>
                 <Button
                   ariaLabel="Close"
-                  className="grid size-9 place-items-center rounded-full bg-stone text-muted"
+                  className="grid size-9 place-items-center rounded-full bg-stone text-muted cursor-pointer hover:text-ink transition"
                   onClick={() => setSheetOpen(false)}
                 >
                   <Icon name="close" size={17} />
                 </Button>
               </div>
-              <div className="mt-6 rounded-2xl bg-stone p-4 text-center">
-                <p className="text-xs font-medium text-muted">Amount</p>
+
+              {/* Amount input */}
+              <div className="mt-5 rounded-2xl bg-stone p-4 text-center">
+                <p className="text-xs font-medium text-muted">Износ на фактура / набавка</p>
                 <div className="mt-1 flex items-center justify-center">
                   <span className="text-2xl font-semibold text-muted">$</span>
                   <input
                     aria-label="Expense amount"
                     autoFocus
-                    className="w-28 bg-transparent text-center text-4xl font-semibold tracking-tight outline-none"
+                    className="w-36 bg-transparent text-center text-4xl font-semibold tracking-tight outline-none"
                     inputMode="decimal"
                     onChange={(event) => setExpenseAmount(event.target.value)}
                     value={expenseAmount}
                   />
                 </div>
               </div>
-              <div className="mt-4 grid grid-cols-4 gap-2">
-                {[
-                  ["food", "Food"],
-                  ["transport", "Travel"],
-                  ["shopping", "Shop"],
-                  ["home", "Home"],
-                ].map(([icon, label]) => (
-                  <Button
-                    className={`flex flex-col items-center gap-2 rounded-2xl border p-3 text-[11px] font-semibold ${
-                      selectedCategory === label ? "border-lime bg-lime-soft text-lime-deep" : "border-line"
-                    }`}
-                    key={label}
-                    onClick={() => setSelectedCategory(label)}
-                  >
-                    <Icon name={icon as IconName} size={19} />
-                    {label}
-                  </Button>
-                ))}
+
+              {/* Category selector */}
+              <div className="mt-4">
+                <label className="text-xs font-semibold text-muted">Категорија на набавка</label>
+                <div className="mt-1.5 grid grid-cols-2 gap-2 sm:grid-cols-4">
+                  {[
+                    ["file", "ИТ и Софтвер", "bg-blue-soft text-blue-deep border-blue"],
+                    ["target", "Опрема", "bg-peach-soft text-peach-deep border-peach"],
+                    ["wallet", "Консалтинг", "bg-violet-soft text-violet-deep border-violet"],
+                    ["chart", "Одржување", "bg-lime-soft text-lime-deep border-lime"],
+                  ].map(([icon, label, activeClasses]) => {
+                    const isSelected = selectedCategory === label;
+                    return (
+                      <Button
+                        className={`flex flex-col items-center gap-1.5 rounded-2xl border p-3 text-xs font-semibold cursor-pointer transition ${
+                          isSelected
+                            ? `${activeClasses} shadow-xs`
+                            : "border-line bg-stone/40 text-muted hover:border-muted hover:text-ink"
+                        }`}
+                        key={label}
+                        onClick={() => setSelectedCategory(label)}
+                      >
+                        <Icon name={icon as IconName} size={20} />
+                        <span className="text-center">{label}</span>
+                      </Button>
+                    );
+                  })}
+                </div>
               </div>
+
+              {/* Subject of Procurement / Description input */}
+              <div className="mt-4 space-y-3">
+                <div>
+                  <label className="text-xs font-semibold text-muted" htmlFor="procurement-desc">
+                    Предмет на набавка / Опис
+                  </label>
+                  <input
+                    id="procurement-desc"
+                    className="mt-1.5 w-full rounded-xl border border-line bg-white px-3.5 py-2.5 text-sm text-ink placeholder:text-muted/70 focus:border-ink focus:outline-none transition"
+                    onChange={(e) => setProcurementDesc(e.target.value)}
+                    placeholder="пр. Лиценци за сервери, Мрежна опрема, Cloud..."
+                    type="text"
+                    value={procurementDesc}
+                  />
+                </div>
+
+                <div>
+                  <label className="text-xs font-semibold text-muted" htmlFor="procurement-contract-ref">
+                    Број на договор / Референца (опционално)
+                  </label>
+                  <input
+                    id="procurement-contract-ref"
+                    className="mt-1.5 w-full rounded-xl border border-line bg-white px-3.5 py-2.5 text-sm text-ink placeholder:text-muted/70 focus:border-ink focus:outline-none transition"
+                    onChange={(e) => setContractRefInput(e.target.value)}
+                    placeholder="пр. CTR-2026-006 или ДН-2026/04"
+                    type="text"
+                    value={contractRefInput}
+                  />
+                </div>
+              </div>
+
+              {/* Submit button */}
               <Button
-                className={`mt-5 flex h-13 w-full items-center justify-center gap-2 rounded-2xl text-sm font-semibold transition ${
-                  saved ? "bg-lime text-ink" : "bg-ink text-white"
+                className={`mt-5 flex h-13 w-full items-center justify-center gap-2 rounded-2xl text-sm font-semibold transition cursor-pointer active:scale-98 ${
+                  saved ? "bg-lime text-ink" : "bg-ink text-white hover:bg-ink/90"
                 }`}
                 onClick={saveExpense}
               >
                 {saved ? (
                   <>
-                    <Icon name="check" size={18} /> Expense saved
+                    <Icon name="check" size={18} /> Набавката е зачувана
                   </>
                 ) : (
-                  "Save expense"
+                  "Зачувај набавка"
                 )}
               </Button>
             </section>
@@ -1227,7 +1293,7 @@ export default function App() {
                 <input
                   className="w-full bg-transparent text-xs font-medium outline-none placeholder:text-muted"
                   onChange={(e) => setTxSearchQuery(e.target.value)}
-                  placeholder="Search by merchant or category..."
+                  placeholder="Пребарувај по назив, референца, категорија..."
                   value={txSearchQuery}
                 />
                 {txSearchQuery && (
@@ -1243,9 +1309,9 @@ export default function App() {
 
               {/* Category pills */}
               <div className="mt-3 flex gap-1.5 overflow-x-auto pb-1 [scrollbar-width:none]">
-                {["All", "Food", "Travel", "Shop", "Home"].map((cat) => (
+                {["All", "ИТ и Софтвер", "Опрема", "Консалтинг", "Одржување"].map((cat) => (
                   <button
-                    className={`rounded-full px-3 py-1 text-xs font-semibold cursor-pointer transition ${
+                    className={`rounded-full px-3 py-1 text-xs font-semibold cursor-pointer transition whitespace-nowrap ${
                       txCategoryFilter === cat
                         ? "bg-ink text-white shadow-sm"
                         : "border border-line bg-white text-muted hover:text-ink"
@@ -1254,7 +1320,7 @@ export default function App() {
                     onClick={() => setTxCategoryFilter(cat)}
                     type="button"
                   >
-                    {cat}
+                    {cat === "All" ? "Сите" : cat}
                   </button>
                 ))}
               </div>
@@ -1266,11 +1332,16 @@ export default function App() {
                     if (timeScope === "monthly" && (tx.month !== "Jun" || tx.year !== selectedYear)) return false;
                     if (timeScope === "yearly" && tx.year !== selectedYear) return false;
                     if (txCategoryFilter !== "All") {
-                      const iconMap: Record<string, string> = { Food: "food", Travel: "transport", Shop: "shopping", Home: "home" };
-                      if (tx.icon !== iconMap[txCategoryFilter]) return false;
+                      if (tx.category !== txCategoryFilter) return false;
                     }
-                    if (txSearchQuery.trim() !== "" && !tx.name.toLowerCase().includes(txSearchQuery.toLowerCase())) {
-                      return false;
+                    if (txSearchQuery.trim() !== "") {
+                      const q = txSearchQuery.toLowerCase();
+                      const matchesName = tx.name.toLowerCase().includes(q);
+                      const matchesCategory = tx.category ? tx.category.toLowerCase().includes(q) : false;
+                      const matchesRef = tx.contractRef ? tx.contractRef.toLowerCase().includes(q) : false;
+                      if (!matchesName && !matchesCategory && !matchesRef) {
+                        return false;
+                      }
                     }
                     return true;
                   })

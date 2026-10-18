@@ -1,6 +1,7 @@
 import { useState, type ReactNode } from "react";
 import mdtLogo from "./assets/mdt-logo.jpg";
 import RegisterPage from "./components/Register/RegisterPage";
+import LoginPage from "./components/Login/LoginPage";
 
 type IconName =
   | "arrow"
@@ -426,10 +427,25 @@ export default function App() {
   const totalApprovedBudget = baseContractBudget + yearlyAnnexesTotal;
   const remainingContractBudget = totalApprovedBudget - yearlyInvoicedTotal;
 
+  if (activeTab === "Login") {
+    return (
+      <LoginPage
+        onLoginSuccess={() => {
+          setActiveTab("Home");
+        }}
+        onNavigateToRegister={() => {
+          setActiveTab("Register");
+        }}
+      />
+    );
+  }
+
   if (activeTab === "Register") {
     return (
       <RegisterPage
-        onNavigateToLogin={() => alert("Пренасочување кон најава...")}
+        onNavigateToLogin={() => {
+          setActiveTab("Login");
+        }}
         onRegisterSuccess={(data) => {
           alert(`Успешно регистриран: ${data.fullName}! Влегувате во системот...`);
           setActiveTab("Home");
@@ -456,7 +472,7 @@ export default function App() {
           </div>
           <button
             className="flex items-center gap-1 sm:gap-1.5 rounded-xl border border-line bg-stone px-2.5 sm:px-3.5 py-1.5 text-xs font-semibold text-ink transition hover:border-peach-deep hover:bg-peach-soft hover:text-peach-deep cursor-pointer"
-            onClick={() => setActiveTab("Register")}
+            onClick={() => setActiveTab("Login")}
             title="Одјави се"
             type="button"
           >

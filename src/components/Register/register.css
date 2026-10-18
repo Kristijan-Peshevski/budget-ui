@@ -1,0 +1,284 @@
+/* Registration Page Styles - Faithful to Coworker's Design System */
+:root {
+  --gov-bg: #652d76;
+  --gov-ink: #25158a;
+  --gov-field: #d9d9d9;
+  --gov-line: #333333;
+  --gov-card: #ffffff;
+  --gov-g1: #2a4ca8;
+  --gov-g2: #b36ee0;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --gov-bg: #4f2260;
+  }
+}
+
+.register-layout {
+  min-height: 100vh;
+  width: 100%;
+  background-color: var(--gov-bg);
+  color: var(--gov-ink);
+  font-family: "Noto Sans", "Segoe UI", Roboto, Arial, sans-serif;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  position: relative;
+  box-sizing: border-box;
+}
+
+.register-brand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 24px;
+  text-align: center;
+}
+
+.register-brand img {
+  width: min(340px, 100%);
+  height: auto;
+  filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.25));
+}
+
+.register-main {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 24px 80px;
+}
+
+.register-card {
+  background: var(--gov-card);
+  border-radius: 36px;
+  padding: 40px 44px;
+  width: 100%;
+  max-width: 620px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.28);
+  box-sizing: border-box;
+}
+
+.register-title {
+  font-size: 2.1rem;
+  font-weight: 600;
+  margin: 0 0 4px 4px;
+  color: var(--gov-ink);
+}
+
+.register-sub {
+  margin: 0 0 24px 4px;
+  font-size: 1rem;
+  color: #555566;
+}
+
+.register-label {
+  display: block;
+  font-size: 1.05rem;
+  font-weight: 500;
+  margin: 14px 0 6px 4px;
+  color: var(--gov-ink);
+}
+
+.register-field {
+  position: relative;
+}
+
+.register-field svg {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 22px;
+  height: 22px;
+  stroke: var(--gov-ink);
+  fill: none;
+  stroke-width: 1.7;
+  pointer-events: none;
+}
+
+.register-field input,
+.register-field select {
+  width: 100%;
+  height: 48px;
+  background: var(--gov-field);
+  border: 2px solid var(--gov-line);
+  border-radius: 12px;
+  padding: 0 46px 0 46px;
+  font: inherit;
+  font-size: 1rem;
+  color: #111111;
+  box-sizing: border-box;
+  transition: border-color 0.2s, outline 0.2s;
+}
+
+.register-field input:focus,
+.register-field select:focus {
+  outline: 3px solid var(--gov-g2);
+  outline-offset: 1px;
+}
+
+.register-eye {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: 0;
+  padding: 4px;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  color: var(--gov-ink);
+}
+
+.register-eye svg {
+  position: static;
+  transform: none;
+  width: 24px;
+  height: 24px;
+  stroke: var(--gov-ink);
+  fill: none;
+}
+
+.register-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin: 20px 0 0 4px;
+  font-size: 0.95rem;
+  flex-wrap: wrap;
+}
+
+.register-terms {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.95rem;
+  cursor: pointer;
+  user-select: none;
+}
+
+.register-terms input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  accent-color: var(--gov-ink);
+  margin: 0;
+  cursor: pointer;
+}
+
+.register-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin: 32px auto 0;
+  width: min(100%, 314px);
+  height: 56px;
+  border: 0;
+  border-radius: 28px;
+  background: linear-gradient(90deg, var(--gov-g1), var(--gov-g2));
+  color: #ffffff;
+  font: 700 1.25rem "Segoe UI", Roboto, Arial, sans-serif;
+  cursor: pointer;
+  box-shadow: 0 8px 20px rgba(42, 76, 168, 0.35);
+  transition: filter 0.2s, transform 0.1s;
+}
+
+.register-btn:hover {
+  filter: brightness(1.08);
+}
+
+.register-btn:active {
+  transform: scale(0.98);
+}
+
+.register-btn:focus-visible {
+  outline: 3px solid var(--gov-ink);
+  outline-offset: 3px;
+}
+
+.register-footer-link {
+  text-align: center;
+  margin-top: 18px;
+  font-size: 0.95rem;
+  color: #444;
+}
+
+.register-footer-link button {
+  background: none;
+  border: 0;
+  font-weight: 700;
+  color: var(--gov-ink);
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 0 4px;
+}
+
+.register-msg {
+  text-align: center;
+  min-height: 1.4em;
+  margin: 16px 0 0;
+  font-size: 0.95rem;
+  font-weight: 500;
+  border-radius: 8px;
+  padding: 6px 10px;
+}
+
+.register-msg.err {
+  color: #b00020;
+  background-color: #fee2e2;
+}
+
+.register-msg.ok {
+  color: #15803d;
+  background-color: #dcfce7;
+}
+
+.register-lang {
+  position: fixed;
+  right: max(24px, env(safe-area-inset-right, 0px));
+  bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+  display: flex;
+  gap: 14px;
+  z-index: 50;
+}
+
+.register-lang button {
+  background: none;
+  border: 0;
+  font: inherit;
+  font-size: 1.25rem;
+  color: var(--gov-ink);
+  cursor: pointer;
+  padding: 2px 4px;
+  transition: opacity 0.2s;
+}
+
+.register-lang button[aria-pressed="true"] {
+  font-weight: 800;
+  text-decoration: underline;
+}
+
+@media (max-width: 900px) {
+  .register-layout {
+    grid-template-columns: 1fr;
+  }
+  .register-brand {
+    padding: 30px 16px 10px;
+  }
+  .register-brand img {
+    width: min(240px, 70%);
+  }
+  .register-main {
+    padding: 10px 16px 60px;
+  }
+  .register-card {
+    padding: 28px 20px;
+    border-radius: 26px;
+  }
+  .register-lang button {
+    color: #ffffff;
+  }
+}

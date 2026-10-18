@@ -1,5 +1,6 @@
 import { useState, type ReactNode } from "react";
 import mdtLogo from "./assets/mdt-logo.jpg";
+import RegisterPage from "./components/Register/RegisterPage";
 
 type IconName =
   | "arrow"
@@ -17,6 +18,7 @@ type IconName =
   | "shopping"
   | "target"
   | "transport"
+  | "user"
   | "wallet";
 
 function Icon({ name, size = 20 }: { name: IconName; size?: number }) {
@@ -94,6 +96,12 @@ function Icon({ name, size = 20 }: { name: IconName; size?: number }) {
       <>
         <path d="m5 17-1 4M19 17l1 4M4 17h16V9l-2-5H6L4 9v8Z" />
         <path d="M4 10h16M7 14h.01M17 14h.01" />
+      </>
+    ),
+    user: (
+      <>
+        <circle cx="12" cy="8" r="4.5" />
+        <path d="M3.5 21c0-4.5 3.8-7 8.5-7s8.5 2.5 8.5 7z" />
       </>
     ),
     wallet: (
@@ -418,6 +426,18 @@ export default function App() {
   const totalApprovedBudget = baseContractBudget + yearlyAnnexesTotal;
   const remainingContractBudget = totalApprovedBudget - yearlyInvoicedTotal;
 
+  if (activeTab === "Register") {
+    return (
+      <RegisterPage
+        onNavigateToLogin={() => alert("Пренасочување кон најава...")}
+        onRegisterSuccess={(data) => {
+          alert(`Успешно регистриран: ${data.fullName}! Влегувате во системот...`);
+          setActiveTab("Home");
+        }}
+      />
+    );
+  }
+
   return (
     <div className="flex h-screen w-screen flex-col overflow-hidden bg-canvas text-ink font-sans">
       {/* Top Header without black lines - responsive for mobile & desktop */}
@@ -436,7 +456,7 @@ export default function App() {
           </div>
           <button
             className="flex items-center gap-1 sm:gap-1.5 rounded-xl border border-line bg-stone px-2.5 sm:px-3.5 py-1.5 text-xs font-semibold text-ink transition hover:border-peach-deep hover:bg-peach-soft hover:text-peach-deep cursor-pointer"
-            onClick={() => alert("Одјавени сте успешно")}
+            onClick={() => setActiveTab("Register")}
             title="Одјави се"
             type="button"
           >

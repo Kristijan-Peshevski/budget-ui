@@ -3,14 +3,17 @@ export type Lang = "mk" | "sq" | "en";
 export interface Dict {
   title: string;
   sub: string;
-  fullName: string;
-  fullNamePlaceholder: string;
+  firstName: string;
+  firstNamePlaceholder: string;
+  lastName: string;
+  lastNamePlaceholder: string;
   email: string;
   emailPlaceholder: string;
+  role: string;
+  roleAdmin: string;
+  roleUser: string;
   institution: string;
   institutionPlaceholder: string;
-  user: string;
-  userPlaceholder: string;
   pass: string;
   passPlaceholder: string;
   confirmPass: string;
@@ -31,15 +34,18 @@ export const T: Record<Lang, Dict> = {
   mk: {
     title: "Регистрација",
     sub: "Креирајте нов службен кориснички профил за пристап.",
-    fullName: "Име и Презиме",
-    fullNamePlaceholder: "пр. Кристијан Пешевски",
-    email: "Службена е-пошта",
+    firstName: "Име",
+    firstNamePlaceholder: "пр. Кристијан",
+    lastName: "Презиме",
+    lastNamePlaceholder: "пр. Пешевски",
+    email: "Службена е-пошта (Email)",
     emailPlaceholder: "kristijan.p@mioa.gov.mk",
+    role: "Корисничка улога (Role)",
+    roleAdmin: "Администратор (ADMIN)",
+    roleUser: "Корисник (USER)",
     institution: "Институција / Орган",
     institutionPlaceholder: "Министерство за дигитална трансформација",
-    user: "Корисничко име",
-    userPlaceholder: "kpeshevski",
-    pass: "Лозинка",
+    pass: "Лозинка (Password)",
     passPlaceholder: "Внесете лозинка",
     confirmPass: "Потврди лозинка",
     confirmPassPlaceholder: "Повторете ја лозинката",
@@ -50,20 +56,23 @@ export const T: Record<Lang, Dict> = {
     errRequired: "Ве молиме пополнете ги сите задолжителни полиња.",
     errPassMismatch: "Лозинките не се совпаѓаат.",
     errEmailInvalid: "Внесете валидна е-пошта.",
-    ok: "Успешна регистрација! Профилот е креиран (демо приказ).",
+    ok: "Успешна регистрација! Податоците се подготвени за Back-End.",
   },
   sq: {
     title: "Regjistrimi",
     sub: "Krijoni një llogari të re zyrtare për qasje në sistem.",
-    fullName: "Emri dhe Mbiemri",
-    fullNamePlaceholder: "p.sh. Kristijan Peshevski",
-    email: "Posta elektronike zyrtare",
+    firstName: "Emri",
+    firstNamePlaceholder: "p.sh. Kristijan",
+    lastName: "Mbiemri",
+    lastNamePlaceholder: "p.sh. Peshevski",
+    email: "Posta elektronike zyrtare (Email)",
     emailPlaceholder: "kristijan.p@mioa.gov.mk",
+    role: "Roli i përdoruesit (Role)",
+    roleAdmin: "Administrator (ADMIN)",
+    roleUser: "Përdorues (USER)",
     institution: "Institucioni / Organi",
     institutionPlaceholder: "Ministria e Transformimit Digjital",
-    user: "Emri i përdoruesit",
-    userPlaceholder: "kpeshevski",
-    pass: "Fjalëkalimi",
+    pass: "Fjalëkalimi (Password)",
     passPlaceholder: "Vendosni fjalëkalimin",
     confirmPass: "Konfirmo fjalëkalimin",
     confirmPassPlaceholder: "Përsëritni fjalëkalimin",
@@ -74,19 +83,22 @@ export const T: Record<Lang, Dict> = {
     errRequired: "Ju lutemi plotësoni të gjitha fushat e kërkuara.",
     errPassMismatch: "Fjalëkalimet nuk përputhen.",
     errEmailInvalid: "Vendosni një email të vlefshëm.",
-    ok: "Regjistrimi i suksesshëm! Llogaria u krijua (version demo).",
+    ok: "Regjistrimi i suksesshëm! Të dhënat janë gati për Back-End.",
   },
   en: {
     title: "Registration",
     sub: "Create a new institutional account to access the system.",
-    fullName: "Full Name",
-    fullNamePlaceholder: "e.g. Kristijan Peshevski",
+    firstName: "First Name",
+    firstNamePlaceholder: "e.g. Kristijan",
+    lastName: "Last Name",
+    lastNamePlaceholder: "e.g. Peshevski",
     email: "Official Email",
     emailPlaceholder: "kristijan.p@mioa.gov.mk",
+    role: "User Role",
+    roleAdmin: "Administrator (ADMIN)",
+    roleUser: "Standard User (USER)",
     institution: "Institution / Department",
     institutionPlaceholder: "Ministry of Digital Transformation",
-    user: "Username",
-    userPlaceholder: "kpeshevski",
     pass: "Password",
     passPlaceholder: "Enter password",
     confirmPass: "Confirm Password",
@@ -98,6 +110,6 @@ export const T: Record<Lang, Dict> = {
     errRequired: "Please fill in all required fields.",
     errPassMismatch: "Passwords do not match.",
     errEmailInvalid: "Please enter a valid email address.",
-    ok: "Registration successful! Account created (demo preview).",
+    ok: "Registration successful! Ready for Back-End API.",
   },
 };

@@ -3,19 +3,32 @@ import govLogo from "../../assets/gov-logo.png";
 import { T, LANGS, type Lang } from "./registerI18n";
 import "./register.css";
 
+export type UserRole = "ADMIN" | "USER";
+
+export interface UserRegistrationPayload {
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
+  role: UserRole;
+  institution?: string;
+}
+
 interface RegisterPageProps {
   onNavigateToLogin?: () => void;
-  onRegisterSuccess?: (userData: { username: string; fullName: string }) => void;
+  onRegisterSuccess?: (userData: UserRegistrationPayload) => void;
 }
 
 export default function RegisterPage({ onNavigateToLogin, onRegisterSuccess }: RegisterPageProps) {
   const [lang, setLang] = useState<Lang>("mk");
   const t = T[lang];
 
-  const [fullName, setFullName] = useState("");
+  // Fields strictly aligned with the backend User entity
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
+  const [role, setRole] = useState<UserRole>("USER");
   const [institution, setInstitution] = useState("Министерство за дигитална трансформација");
-  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPass, setShowPass] = useState(false);
@@ -32,7 +45,7 @@ export default function RegisterPage({ onNavigateToLogin, onRegisterSuccess }: R
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (!fullName.trim() || !email.trim() || !username.trim() || !password || !confirmPassword) {
+    if (!firstName.trim() || !lastName.trim() || !email.trim() || !password || !confirmPassword) {
       setStatus("err");
       setErrorMsg(t.errRequired);
       return;
@@ -53,9 +66,20 @@ export default function RegisterPage({ onNavigateToLogin, onRegisterSuccess }: R
     setStatus("ok");
     setErrorMsg("");
 
+    const payload: UserRegistrationPayload = {
+      firstName: firstName.trim(),
+      lastName: lastName.trim(),
+      email: email.trim(),
+      password,
+      role,
+      institution: institution.trim(),
+    };
+
+    console.log("Ready to send to Spring Boot backend controller:", payload);
+
     if (onRegisterSuccess) {
       setTimeout(() => {
-        onRegisterSuccess({ username, fullName });
+        onRegisterSuccess(payload);
       }, 1200);
     }
   };
@@ -77,22 +101,45 @@ export default function RegisterPage({ onNavigateToLogin, onRegisterSuccess }: R
           <p className="register-sub">{t.sub}</p>
 
           <form onSubmit={handleSubmit} noValidate>
-            {/* Full Name */}
-            <label className="register-label" htmlFor="reg-fullname">{t.fullName}</label>
-            <div className="register-field">
-              <svg viewBox="0 0 24 24">
-                <circle cx="12" cy="8" r="4.5" />
-                <path d="M3.5 21c0-4.5 3.8-7 8.5-7s8.5 2.5 8.5 7z" />
-              </svg>
-              <input
-                id="reg-fullname"
-                name="fullName"
-                autoComplete="name"
-                placeholder={t.fullNamePlaceholder}
-                required
-                value={fullName}
-                onChange={(e) => setFullName(e.target.value)}
-              />
+            {/* First Name & Last Name (Grid of 2) */}
+            <div className="register-grid-2">
+              <div>
+                <label className="register-label" htmlFor="reg-firstname">{t.firstName}</label>
+                <div className="register-field">
+                  <svg viewBox="0 0 24 24">
+                    <circle cx="12" cy="8" r="4.5" />
+                    <path d="M3.5 21c0-4.5 3.8-7 8.5-7s8.5 2.5 8.5 7z" />
+                  </svg>
+                  <input
+                    id="reg-firstname"
+                    name="firstName"
+                    autoComplete="given-name"
+                    placeholder={t.firstNamePlaceholder}
+                    required
+                    value={firstName}
+                    onChange={(e) => setFirstName(e.target.value)}
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="register-label" htmlFor="reg-lastname">{t.lastName}</label>
+                <div className="register-field">
+                  <svg viewBox="0 0 24 24">
+                    <circle cx="12" cy="8" r="4.5" />
+                    <path d="M3.5 21c0-4.5 3.8-7 8.5-7s8.5 2.5 8.5 7z" />
+                  </svg>
+                  <input
+                    id="reg-lastname"
+                    name="lastName"
+                    autoComplete="family-name"
+                    placeholder={t.lastNamePlaceholder}
+                    required
+                    value={lastName}
+                    onChange={(e) => setLastName(e.target.value)}
+                  />
+                </div>
+              </div>
             </div>
 
             {/* Email */}
@@ -114,37 +161,42 @@ export default function RegisterPage({ onNavigateToLogin, onRegisterSuccess }: R
               />
             </div>
 
-            {/* Institution / Sector */}
-            <label className="register-label" htmlFor="reg-inst">{t.institution}</label>
-            <div className="register-field">
-              <svg viewBox="0 0 24 24">
-                <path d="M3 21h18M3 10h18M5 10v11M19 10v11M9 10v11M15 10v11M12 3 2 10h20Z" />
-              </svg>
-              <input
-                id="reg-inst"
-                name="institution"
-                placeholder={t.institutionPlaceholder}
-                value={institution}
-                onChange={(e) => setInstitution(e.target.value)}
-              />
-            </div>
+            {/* User Role (Enum: ADMIN | USER) */}
+            <div className="register-grid-2">
+              <div>
+                <label className="register-label" htmlFor="reg-role">{t.role}</label>
+                <div className="register-field">
+                  <svg viewBox="0 0 24 24">
+                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                  </svg>
+                  <select
+                    id="reg-role"
+                    name="role"
+                    value={role}
+                    onChange={(e) => setRole(e.target.value as UserRole)}
+                  >
+                    <option value="USER">{t.roleUser}</option>
+                    <option value="ADMIN">{t.roleAdmin}</option>
+                  </select>
+                </div>
+              </div>
 
-            {/* Username */}
-            <label className="register-label" htmlFor="reg-username">{t.user}</label>
-            <div className="register-field">
-              <svg viewBox="0 0 24 24">
-                <circle cx="12" cy="7" r="4" />
-                <path d="M6 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2" />
-              </svg>
-              <input
-                id="reg-username"
-                name="username"
-                autoComplete="username"
-                placeholder={t.userPlaceholder}
-                required
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-              />
+              {/* Institution / Department */}
+              <div>
+                <label className="register-label" htmlFor="reg-inst">{t.institution}</label>
+                <div className="register-field">
+                  <svg viewBox="0 0 24 24">
+                    <path d="M3 21h18M3 10h18M5 10v11M19 10v11M9 10v11M15 10v11M12 3 2 10h20Z" />
+                  </svg>
+                  <input
+                    id="reg-inst"
+                    name="institution"
+                    placeholder={t.institutionPlaceholder}
+                    value={institution}
+                    onChange={(e) => setInstitution(e.target.value)}
+                  />
+                </div>
+              </div>
             </div>
 
             {/* Password */}

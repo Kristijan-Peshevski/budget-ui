@@ -80,6 +80,18 @@
   color: var(--gov-ink);
 }
 
+.register-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+@media (max-width: 600px) {
+  .register-grid-2 {
+    grid-template-columns: 1fr;
+  }
+}
+
 .register-field {
   position: relative;
 }

@@ -447,7 +447,7 @@ export default function App() {
           setActiveTab("Login");
         }}
         onRegisterSuccess={(data) => {
-          alert(`Успешно регистриран: ${data.fullName}! Влегувате во системот...`);
+          alert(`Успешно регистриран: ${data.firstName} ${data.lastName} (${data.role})! Влегувате во системот...`);
           setActiveTab("Home");
         }}
       />

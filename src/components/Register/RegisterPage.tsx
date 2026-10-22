@@ -11,7 +11,6 @@ export interface UserRegistrationPayload {
   email: string;
   password: string;
   role: UserRole;
-  institution?: string;
 }
 
 interface RegisterPageProps {
@@ -23,12 +22,10 @@ export default function RegisterPage({ onNavigateToLogin, onRegisterSuccess }: R
   const [lang, setLang] = useState<Lang>("mk");
   const t = T[lang];
 
-  // Fields strictly aligned with the backend User entity
+  // Core user fields strictly aligned with User entity
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
-  const [role, setRole] = useState<UserRole>("USER");
-  const [institution, setInstitution] = useState("Министерство за дигитална трансформација");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPass, setShowPass] = useState(false);
@@ -66,13 +63,13 @@ export default function RegisterPage({ onNavigateToLogin, onRegisterSuccess }: R
     setStatus("ok");
     setErrorMsg("");
 
+    // Automatically assign standard "USER" role for self-registration (security best practice)
     const payload: UserRegistrationPayload = {
       firstName: firstName.trim(),
       lastName: lastName.trim(),
       email: email.trim(),
       password,
-      role,
-      institution: institution.trim(),
+      role: "USER",
     };
 
     console.log("Ready to send to Spring Boot backend controller:", payload);
@@ -159,44 +156,6 @@ export default function RegisterPage({ onNavigateToLogin, onRegisterSuccess }: R
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
-            </div>
-
-            {/* User Role (Enum: ADMIN | USER) */}
-            <div className="register-grid-2">
-              <div>
-                <label className="register-label" htmlFor="reg-role">{t.role}</label>
-                <div className="register-field">
-                  <svg viewBox="0 0 24 24">
-                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-                  </svg>
-                  <select
-                    id="reg-role"
-                    name="role"
-                    value={role}
-                    onChange={(e) => setRole(e.target.value as UserRole)}
-                  >
-                    <option value="USER">{t.roleUser}</option>
-                    <option value="ADMIN">{t.roleAdmin}</option>
-                  </select>
-                </div>
-              </div>
-
-              {/* Institution / Department */}
-              <div>
-                <label className="register-label" htmlFor="reg-inst">{t.institution}</label>
-                <div className="register-field">
-                  <svg viewBox="0 0 24 24">
-                    <path d="M3 21h18M3 10h18M5 10v11M19 10v11M9 10v11M15 10v11M12 3 2 10h20Z" />
-                  </svg>
-                  <input
-                    id="reg-inst"
-                    name="institution"
-                    placeholder={t.institutionPlaceholder}
-                    value={institution}
-                    onChange={(e) => setInstitution(e.target.value)}
-                  />
-                </div>
-              </div>
             </div>
 
             {/* Password */}

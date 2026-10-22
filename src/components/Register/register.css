@@ -249,11 +249,16 @@
 }
 
 .register-lang {
-  position: fixed;
-  right: max(24px, env(safe-area-inset-right, 0px));
-  bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+  position: absolute;
+  right: 28px;
+  bottom: 24px;
   display: flex;
-  gap: 14px;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 14px;
+  background-color: #ffffff;
+  border-radius: 9999px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18);
   z-index: 50;
 }
 
@@ -261,16 +266,24 @@
   background: none;
   border: 0;
   font: inherit;
-  font-size: 1.25rem;
+  font-size: 1.15rem;
+  font-weight: 600;
   color: var(--gov-ink);
   cursor: pointer;
-  padding: 2px 4px;
-  transition: opacity 0.2s;
+  padding: 3px 6px;
+  border-radius: 6px;
+  transition: background-color 0.15s, color 0.15s;
+}
+
+.register-lang button:hover {
+  background-color: rgba(37, 21, 138, 0.08);
 }
 
 .register-lang button[aria-pressed="true"] {
   font-weight: 800;
   text-decoration: underline;
+  text-underline-offset: 4px;
+  color: var(--gov-ink);
 }
 
 @media (max-width: 900px) {
@@ -290,7 +303,8 @@
     padding: 28px 20px;
     border-radius: 26px;
   }
-  .register-lang button {
-    color: #ffffff;
+  .register-lang {
+    right: 16px;
+    bottom: 16px;
   }
 }

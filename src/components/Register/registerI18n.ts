@@ -9,11 +9,6 @@ export interface Dict {
   lastNamePlaceholder: string;
   email: string;
   emailPlaceholder: string;
-  role: string;
-  roleAdmin: string;
-  roleUser: string;
-  institution: string;
-  institutionPlaceholder: string;
   pass: string;
   passPlaceholder: string;
   confirmPass: string;
@@ -40,11 +35,6 @@ export const T: Record<Lang, Dict> = {
     lastNamePlaceholder: "пр. Пешевски",
     email: "Службена е-пошта (Email)",
     emailPlaceholder: "kristijan.p@mioa.gov.mk",
-    role: "Корисничка улога (Role)",
-    roleAdmin: "Администратор (ADMIN)",
-    roleUser: "Корисник (USER)",
-    institution: "Институција",
-    institutionPlaceholder: "Министерство за дигитална трансформација",
     pass: "Лозинка (Password)",
     passPlaceholder: "Внесете лозинка",
     confirmPass: "Потврди лозинка",
@@ -67,11 +57,6 @@ export const T: Record<Lang, Dict> = {
     lastNamePlaceholder: "p.sh. Peshevski",
     email: "Posta elektronike zyrtare (Email)",
     emailPlaceholder: "kristijan.p@mioa.gov.mk",
-    role: "Roli i përdoruesit (Role)",
-    roleAdmin: "Administrator (ADMIN)",
-    roleUser: "Përdorues (USER)",
-    institution: "Institucioni",
-    institutionPlaceholder: "Ministria e Transformimit Digjital",
     pass: "Fjalëkalimi (Password)",
     passPlaceholder: "Vendosni fjalëkalimin",
     confirmPass: "Konfirmo fjalëkalimin",
@@ -94,11 +79,6 @@ export const T: Record<Lang, Dict> = {
     lastNamePlaceholder: "e.g. Peshevski",
     email: "Official Email",
     emailPlaceholder: "kristijan.p@mioa.gov.mk",
-    role: "User Role",
-    roleAdmin: "Administrator (ADMIN)",
-    roleUser: "Standard User (USER)",
-    institution: "Institution",
-    institutionPlaceholder: "Ministry of Digital Transformation",
     pass: "Password",
     passPlaceholder: "Enter password",
     confirmPass: "Confirm Password",

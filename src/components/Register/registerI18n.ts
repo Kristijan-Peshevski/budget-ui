@@ -1,29 +1,29 @@
-export type Lang = "mk" | "sq" | "en";
+export type Lang = "mk" | "sq" | "en"
 
 export interface Dict {
-  title: string;
-  sub: string;
-  firstName: string;
-  firstNamePlaceholder: string;
-  lastName: string;
-  lastNamePlaceholder: string;
-  email: string;
-  emailPlaceholder: string;
-  pass: string;
-  passPlaceholder: string;
-  confirmPass: string;
-  confirmPassPlaceholder: string;
-  acceptTerms: string;
-  registerBtn: string;
-  alreadyHaveAccount: string;
-  loginLink: string;
-  errRequired: string;
-  errPassMismatch: string;
-  errEmailInvalid: string;
-  ok: string;
+  title: string
+  sub: string
+  firstName: string
+  firstNamePlaceholder: string
+  lastName: string
+  lastNamePlaceholder: string
+  email: string
+  emailPlaceholder: string
+  pass: string
+  passPlaceholder: string
+  confirmPass: string
+  confirmPassPlaceholder: string
+  acceptTerms: string
+  registerBtn: string
+  alreadyHaveAccount: string
+  loginLink: string
+  errRequired: string
+  errPassMismatch: string
+  errEmailInvalid: string
+  ok: string
 }
 
-export const LANGS: Lang[] = ["mk", "sq", "en"];
+export const LANGS: Lang[] = ["mk", "sq", "en"]
 
 export const T: Record<Lang, Dict> = {
   mk: {
@@ -92,4 +92,4 @@ export const T: Record<Lang, Dict> = {
     errEmailInvalid: "Please enter a valid email address.",
     ok: "Registration successful! Ready for Back-End API.",
   },
-};
+}

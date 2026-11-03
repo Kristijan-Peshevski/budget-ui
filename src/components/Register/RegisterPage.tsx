@@ -1,67 +1,76 @@
-import { useState, type FormEvent, useEffect } from "react";
-import govLogo from "../../assets/gov-logo.png";
-import { T, LANGS, type Lang } from "./registerI18n";
-import "./register.css";
+import { useState, type FormEvent, useEffect } from "react"
+import govLogo from "../../assets/gov-logo.png"
+import { T, LANGS, type Lang } from "./registerI18n"
+import "./register.css"
 
-export type UserRole = "ADMIN" | "USER";
+export type UserRole = "ADMIN" | "USER"
 
 export interface UserRegistrationPayload {
-  firstName: string;
-  lastName: string;
-  email: string;
-  password: string;
-  role: UserRole;
+  firstName: string
+  lastName: string
+  email: string
+  password: string
+  role: UserRole
 }
 
 interface RegisterPageProps {
-  onNavigateToLogin?: () => void;
-  onRegisterSuccess?: (userData: UserRegistrationPayload) => void;
+  onNavigateToLogin?: () => void
+  onRegisterSuccess?: (userData: UserRegistrationPayload) => void
 }
 
-export default function RegisterPage({ onNavigateToLogin, onRegisterSuccess }: RegisterPageProps) {
-  const [lang, setLang] = useState<Lang>("mk");
-  const t = T[lang];
+export default function RegisterPage({
+  onNavigateToLogin,
+  onRegisterSuccess,
+}: RegisterPageProps) {
+  const [lang, setLang] = useState<Lang>("mk")
+  const t = T[lang]
 
   // Core user fields strictly aligned with User entity
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [showPass, setShowPass] = useState(false);
-  const [showConfirmPass, setShowConfirmPass] = useState(false);
-  const [acceptTerms, setAcceptTerms] = useState(false);
+  const [firstName, setFirstName] = useState("")
+  const [lastName, setLastName] = useState("")
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  const [confirmPassword, setConfirmPassword] = useState("")
+  const [showPass, setShowPass] = useState(false)
+  const [showConfirmPass, setShowConfirmPass] = useState(false)
+  const [acceptTerms, setAcceptTerms] = useState(false)
 
-  const [status, setStatus] = useState<"idle" | "ok" | "err">("idle");
-  const [errorMsg, setErrorMsg] = useState("");
+  const [status, setStatus] = useState<"idle" | "ok" | "err">("idle")
+  const [errorMsg, setErrorMsg] = useState("")
 
   useEffect(() => {
-    document.documentElement.lang = lang;
-  }, [lang]);
+    document.documentElement.lang = lang
+  }, [lang])
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+    e.preventDefault()
 
-    if (!firstName.trim() || !lastName.trim() || !email.trim() || !password || !confirmPassword) {
-      setStatus("err");
-      setErrorMsg(t.errRequired);
-      return;
+    if (
+      !firstName.trim() ||
+      !lastName.trim() ||
+      !email.trim() ||
+      !password ||
+      !confirmPassword
+    ) {
+      setStatus("err")
+      setErrorMsg(t.errRequired)
+      return
     }
 
     if (!email.includes("@") || !email.includes(".")) {
-      setStatus("err");
-      setErrorMsg(t.errEmailInvalid);
-      return;
+      setStatus("err")
+      setErrorMsg(t.errEmailInvalid)
+      return
     }
 
     if (password !== confirmPassword) {
-      setStatus("err");
-      setErrorMsg(t.errPassMismatch);
-      return;
+      setStatus("err")
+      setErrorMsg(t.errPassMismatch)
+      return
     }
 
-    setStatus("ok");
-    setErrorMsg("");
+    setStatus("ok")
+    setErrorMsg("")
 
     // Automatically assign standard "USER" role for self-registration (security best practice)
     const payload: UserRegistrationPayload = {
@@ -70,16 +79,16 @@ export default function RegisterPage({ onNavigateToLogin, onRegisterSuccess }: R
       email: email.trim(),
       password,
       role: "USER",
-    };
+    }
 
-    console.log("Ready to send to Spring Boot backend controller:", payload);
+    console.log("Ready to send to Spring Boot backend controller:", payload)
 
     if (onRegisterSuccess) {
       setTimeout(() => {
-        onRegisterSuccess(payload);
-      }, 1200);
+        onRegisterSuccess(payload)
+      }, 1200)
     }
-  };
+  }
 
   return (
     <div className="register-layout">
@@ -101,7 +110,9 @@ export default function RegisterPage({ onNavigateToLogin, onRegisterSuccess }: R
             {/* First Name & Last Name (Grid of 2) */}
             <div className="register-grid-2">
               <div>
-                <label className="register-label" htmlFor="reg-firstname">{t.firstName}</label>
+                <label className="register-label" htmlFor="reg-firstname">
+                  {t.firstName}
+                </label>
                 <div className="register-field">
                   <svg viewBox="0 0 24 24">
                     <circle cx="12" cy="8" r="4.5" />
@@ -120,7 +131,9 @@ export default function RegisterPage({ onNavigateToLogin, onRegisterSuccess }: R
               </div>
 
               <div>
-                <label className="register-label" htmlFor="reg-lastname">{t.lastName}</label>
+                <label className="register-label" htmlFor="reg-lastname">
+                  {t.lastName}
+                </label>
                 <div className="register-field">
                   <svg viewBox="0 0 24 24">
                     <circle cx="12" cy="8" r="4.5" />
@@ -140,7 +153,9 @@ export default function RegisterPage({ onNavigateToLogin, onRegisterSuccess }: R
             </div>
 
             {/* Email */}
-            <label className="register-label" htmlFor="reg-email">{t.email}</label>
+            <label className="register-label" htmlFor="reg-email">
+              {t.email}
+            </label>
             <div className="register-field">
               <svg viewBox="0 0 24 24">
                 <rect x="3" y="5" width="18" height="14" rx="2" />
@@ -159,7 +174,9 @@ export default function RegisterPage({ onNavigateToLogin, onRegisterSuccess }: R
             </div>
 
             {/* Password */}
-            <label className="register-label" htmlFor="reg-pass">{t.pass}</label>
+            <label className="register-label" htmlFor="reg-pass">
+              {t.pass}
+            </label>
             <div className="register-field">
               <svg viewBox="0 0 24 24">
                 <rect x="4.5" y="10.5" width="15" height="10.5" rx="2" />
@@ -189,7 +206,9 @@ export default function RegisterPage({ onNavigateToLogin, onRegisterSuccess }: R
             </div>
 
             {/* Confirm Password */}
-            <label className="register-label" htmlFor="reg-confirm-pass">{t.confirmPass}</label>
+            <label className="register-label" htmlFor="reg-confirm-pass">
+              {t.confirmPass}
+            </label>
             <div className="register-field">
               <svg viewBox="0 0 24 24">
                 <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
@@ -241,7 +260,7 @@ export default function RegisterPage({ onNavigateToLogin, onRegisterSuccess }: R
               <button
                 type="button"
                 onClick={() => {
-                  if (onNavigateToLogin) onNavigateToLogin();
+                  if (onNavigateToLogin) onNavigateToLogin()
                 }}
               >
                 {t.loginLink}
@@ -262,7 +281,11 @@ export default function RegisterPage({ onNavigateToLogin, onRegisterSuccess }: R
       </main>
 
       {/* Language switcher (MK | SQ | EN) */}
-      <div className="register-lang" role="group" aria-label="Language selector">
+      <div
+        className="register-lang"
+        role="group"
+        aria-label="Language selector"
+      >
         {LANGS.map((l) => (
           <button
             key={l}
@@ -275,5 +298,5 @@ export default function RegisterPage({ onNavigateToLogin, onRegisterSuccess }: R
         ))}
       </div>
     </div>
-  );
+  )
 }

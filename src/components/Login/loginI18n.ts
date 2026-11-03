@@ -1,20 +1,20 @@
-export type Lang = "mk" | "sq" | "en";
+export type Lang = "mk" | "sq" | "en"
 
 export interface Dict {
-  title: string;
-  sub: string;
-  user: string;
-  pass: string;
-  remember: string;
-  forgot: string;
-  login: string;
-  noAccount: string;
-  registerLink: string;
-  err: string;
-  ok: string;
+  title: string
+  sub: string
+  user: string
+  pass: string
+  remember: string
+  forgot: string
+  login: string
+  noAccount: string
+  registerLink: string
+  err: string
+  ok: string
 }
 
-export const LANGS: Lang[] = ["mk", "sq", "en"];
+export const LANGS: Lang[] = ["mk", "sq", "en"]
 
 export const T: Record<Lang, Dict> = {
   mk: {
@@ -56,4 +56,4 @@ export const T: Record<Lang, Dict> = {
     err: "Enter your username and password.",
     ok: "Login successful! Redirecting to dashboard...",
   },
-};
+}

@@ -1,42 +1,45 @@
-import { useState, type FormEvent, useEffect } from "react";
-import govLogo from "../../assets/gov-logo.png";
-import { T, LANGS, type Lang } from "./loginI18n";
-import "./login.css";
+import { useState, type FormEvent, useEffect } from "react"
+import govLogo from "../../assets/gov-logo.png"
+import { T, LANGS, type Lang } from "./loginI18n"
+import "./login.css"
 
 interface LoginPageProps {
-  onLoginSuccess?: (username: string) => void;
-  onNavigateToRegister?: () => void;
+  onLoginSuccess?: (username: string) => void
+  onNavigateToRegister?: () => void
 }
 
-export default function LoginPage({ onLoginSuccess, onNavigateToRegister }: LoginPageProps) {
-  const [lang, setLang] = useState<Lang>("mk");
-  const t = T[lang];
+export default function LoginPage({
+  onLoginSuccess,
+  onNavigateToRegister,
+}: LoginPageProps) {
+  const [lang, setLang] = useState<Lang>("mk")
+  const t = T[lang]
 
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [remember, setRemember] = useState(false);
-  const [showPass, setShowPass] = useState(false);
-  const [status, setStatus] = useState<"idle" | "ok" | "err">("idle");
+  const [username, setUsername] = useState("")
+  const [password, setPassword] = useState("")
+  const [remember, setRemember] = useState(false)
+  const [showPass, setShowPass] = useState(false)
+  const [status, setStatus] = useState<"idle" | "ok" | "err">("idle")
 
   useEffect(() => {
-    document.documentElement.lang = lang;
-  }, [lang]);
+    document.documentElement.lang = lang
+  }, [lang])
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+    e.preventDefault()
     if (username.trim() && password) {
-      setStatus("ok");
+      setStatus("ok")
       if (onLoginSuccess) {
         setTimeout(() => {
-          onLoginSuccess(username);
-        }, 800);
+          onLoginSuccess(username)
+        }, 800)
       }
     } else {
-      setStatus("err");
+      setStatus("err")
     }
-  };
+  }
 
-  const message = status === "ok" ? t.ok : status === "err" ? t.err : "";
+  const message = status === "ok" ? t.ok : status === "err" ? t.err : ""
 
   return (
     <div className="login-layout">
@@ -108,7 +111,15 @@ export default function LoginPage({ onLoginSuccess, onNavigateToRegister }: Logi
                 />
                 <span>{t.remember}</span>
               </label>
-              <a href="#" onClick={(e) => { e.preventDefault(); alert("Контактирајте го вашиот системски администратор за ресетирање на лозинка."); }}>
+              <a
+                href="#"
+                onClick={(e) => {
+                  e.preventDefault()
+                  alert(
+                    "Контактирајте го вашиот системски администратор за ресетирање на лозинка.",
+                  )
+                }}
+              >
                 {t.forgot}
               </a>
             </div>
@@ -124,7 +135,7 @@ export default function LoginPage({ onLoginSuccess, onNavigateToRegister }: Logi
               <button
                 type="button"
                 onClick={() => {
-                  if (onNavigateToRegister) onNavigateToRegister();
+                  if (onNavigateToRegister) onNavigateToRegister()
                 }}
               >
                 {t.registerLink}
@@ -132,7 +143,10 @@ export default function LoginPage({ onLoginSuccess, onNavigateToRegister }: Logi
             </div>
 
             {message && (
-              <p className={`login-msg ${status === "err" ? "err" : "ok"}`} role="status">
+              <p
+                className={`login-msg ${status === "err" ? "err" : "ok"}`}
+                role="status"
+              >
                 {message}
               </p>
             )}
@@ -154,5 +168,5 @@ export default function LoginPage({ onLoginSuccess, onNavigateToRegister }: Logi
         ))}
       </div>
     </div>
-  );
+  )
 }

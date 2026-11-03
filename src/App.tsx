@@ -126,7 +126,7 @@ interface Contract {
 
   invoiced: number
 
-  status: "Активен" | "Завршен"
+  status: "Активен" | "Завршен" | "На проверка"
 }
 
 interface Invoice {
@@ -145,7 +145,7 @@ interface Invoice {
   status: "На проверка" | "Одобрен" | "Платена"
 }
 
-const contracts: Contract[] = [
+const initialContracts: Contract[] = [
   {
     id: "ДОГ-2026-001",
     supplier: "MDT Enterprise Solutions",
@@ -324,7 +324,11 @@ export default function App() {
     null,
   )
 
+  const [contracts, setContracts] = useState(initialContracts)
+
   const [invoices, setInvoices] = useState(initialInvoices)
+
+  const [contractModalOpen, setContractModalOpen] = useState(false)
 
   const [invoiceModalOpen, setInvoiceModalOpen] = useState(false)
 
@@ -341,6 +345,12 @@ export default function App() {
   const [newInvoiceDueDate, setNewInvoiceDueDate] = useState("")
   const [invoiceFormError, setInvoiceFormError] = useState("")
   const [editingInvoiceId, setEditingInvoiceId] = useState<string | null>(null)
+  const [newContractNumber, setNewContractNumber] = useState("")
+  const [newContractSupplier, setNewContractSupplier] = useState("")
+  const [newContractSubject, setNewContractSubject] = useState("")
+  const [newContractPeriod, setNewContractPeriod] = useState("")
+  const [newContractValue, setNewContractValue] = useState("")
+  const [contractFormError, setContractFormError] = useState("")
 
   const filteredContracts = useMemo(
     () =>
@@ -379,6 +389,49 @@ export default function App() {
     setNewInvoiceDueDate("")
     setInvoiceFormError("")
     setEditingInvoiceId(null)
+  }
+
+  const resetContractForm = () => {
+    setNewContractNumber("")
+    setNewContractSupplier("")
+    setNewContractSubject("")
+    setNewContractPeriod("")
+    setNewContractValue("")
+    setContractFormError("")
+  }
+
+  const saveContractDraft = () => {
+    const value = Number(newContractValue.replace(",", "."))
+    const contractNumber = newContractNumber.trim()
+    if (
+      !contractNumber ||
+      !newContractSupplier.trim() ||
+      !newContractSubject.trim() ||
+      !newContractPeriod.trim() ||
+      !Number.isFinite(value) ||
+      value <= 0 ||
+      contracts.some((contract) => contract.id === contractNumber)
+    ) {
+      setContractFormError(
+        "Внесете уникален број, добавувач, предмет, период и валидна вредност поголема од нула.",
+      )
+      return
+    }
+
+    setContracts((items) => [
+      {
+        id: contractNumber,
+        supplier: newContractSupplier.trim(),
+        subject: newContractSubject.trim(),
+        period: newContractPeriod.trim(),
+        value,
+        invoiced: 0,
+        status: "На проверка",
+      },
+      ...items,
+    ])
+    setContractModalOpen(false)
+    resetContractForm()
   }
 
   const openInvoiceEditor = (invoice: Invoice) => {
@@ -763,9 +816,9 @@ export default function App() {
                   </div>
                   <Button
                     className="flex items-center gap-2 rounded-xl bg-ink px-3 py-2 text-xs font-semibold text-white hover:bg-ink-soft"
-                    onClick={() => setInvoiceModalOpen(true)}
+                    onClick={() => setContractModalOpen(true)}
                   >
-                    <Icon name="plus" size={15} /> Нова фактура
+                    <Icon name="plus" size={15} /> Нов договор
                   </Button>
                 </div>
                 <div className="hidden overflow-x-auto sm:block">
@@ -1046,6 +1099,90 @@ export default function App() {
           >
             Отвори ги сите фактури
           </Button>
+        </Modal>
+      )}
+
+      {contractModalOpen && (
+        <Modal
+          onClose={() => {
+            resetContractForm()
+            setContractModalOpen(false)
+          }}
+          title="Регистрирај нов договор"
+        >
+          <div className="grid gap-4 sm:grid-cols-2">
+            <label className="text-xs font-semibold text-muted">
+              Број на договор
+              <input
+                className="mt-1.5 w-full rounded-xl border border-line px-3 py-2.5 text-sm font-normal text-ink outline-none focus:border-ink"
+                onChange={(event) => setNewContractNumber(event.target.value)}
+                placeholder="пр. ДОГ-2026-003"
+                value={newContractNumber}
+              />
+            </label>
+            <label className="text-xs font-semibold text-muted">
+              Добавувач
+              <input
+                className="mt-1.5 w-full rounded-xl border border-line px-3 py-2.5 text-sm font-normal text-ink outline-none focus:border-ink"
+                onChange={(event) => setNewContractSupplier(event.target.value)}
+                placeholder="Име на добавувач"
+                value={newContractSupplier}
+              />
+            </label>
+            <label className="text-xs font-semibold text-muted sm:col-span-2">
+              Предмет на договорот
+              <input
+                className="mt-1.5 w-full rounded-xl border border-line px-3 py-2.5 text-sm font-normal text-ink outline-none focus:border-ink"
+                onChange={(event) => setNewContractSubject(event.target.value)}
+                placeholder="Краток опис на набавката или услугата"
+                value={newContractSubject}
+              />
+            </label>
+            <label className="text-xs font-semibold text-muted">
+              Период
+              <input
+                className="mt-1.5 w-full rounded-xl border border-line px-3 py-2.5 text-sm font-normal text-ink outline-none focus:border-ink"
+                onChange={(event) => setNewContractPeriod(event.target.value)}
+                placeholder="пр. 01.07.2026 – 31.12.2026"
+                value={newContractPeriod}
+              />
+            </label>
+            <label className="text-xs font-semibold text-muted">
+              Вредност (МКД)
+              <input
+                className="mt-1.5 w-full rounded-xl border border-line px-3 py-2.5 text-sm font-normal text-ink outline-none focus:border-ink"
+                inputMode="decimal"
+                onChange={(event) => setNewContractValue(event.target.value)}
+                placeholder="0,00"
+                value={newContractValue}
+              />
+            </label>
+          </div>
+          {contractFormError && (
+            <p
+              className="mt-3 rounded-xl bg-peach-soft px-3 py-2 text-xs font-semibold text-peach-deep"
+              role="alert"
+            >
+              {contractFormError}
+            </p>
+          )}
+          <div className="mt-5 flex gap-2">
+            <Button
+              className="flex-1 rounded-xl border border-line px-4 py-3 text-sm font-semibold text-muted hover:text-ink"
+              onClick={() => {
+                resetContractForm()
+                setContractModalOpen(false)
+              }}
+            >
+              Откажи
+            </Button>
+            <Button
+              className="flex-1 rounded-xl bg-ink px-4 py-3 text-sm font-semibold text-white"
+              onClick={saveContractDraft}
+            >
+              Зачувај како нацрт
+            </Button>
+          </div>
         </Modal>
       )}
 

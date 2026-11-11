@@ -1,5 +1,6 @@
 import { useState, type FormEvent, useEffect } from "react"
 import govLogo from "../../assets/gov-logo.png"
+import { loginUser } from "../../api"
 import { T, LANGS, type Lang } from "./loginI18n"
 import "./login.css"
 
@@ -20,26 +21,40 @@ export default function LoginPage({
   const [remember, setRemember] = useState(false)
   const [showPass, setShowPass] = useState(false)
   const [status, setStatus] = useState<"idle" | "ok" | "err">("idle")
+  const [errorMsg, setErrorMsg] = useState("")
 
   useEffect(() => {
     document.documentElement.lang = lang
   }, [lang])
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    if (username.trim() && password) {
+
+    if (!username.trim() || !password) {
+      setErrorMsg(t.err)
+      setStatus("err")
+      return
+    }
+
+    try {
+      const response = await loginUser(username.trim(), password)
+      localStorage.setItem("budget-api-token", response.token)
       setStatus("ok")
+      setErrorMsg("")
       if (onLoginSuccess) {
         setTimeout(() => {
           onLoginSuccess(username)
         }, 800)
       }
-    } else {
+    } catch (error) {
       setStatus("err")
+      setErrorMsg(
+        error instanceof Error ? error.message : "Најавувањето не успеа.",
+      )
     }
   }
 
-  const message = status === "ok" ? t.ok : status === "err" ? t.err : ""
+  const message = status === "ok" ? t.ok : status === "err" ? errorMsg : ""
 
   return (
     <div className="login-layout">

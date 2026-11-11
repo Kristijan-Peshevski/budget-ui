@@ -1,5 +1,6 @@
 import { useState, type FormEvent, useEffect } from "react"
 import govLogo from "../../assets/gov-logo.png"
+import { registerUser } from "../../api"
 import { T, LANGS, type Lang } from "./registerI18n"
 import "./register.css"
 
@@ -42,7 +43,7 @@ export default function RegisterPage({
     document.documentElement.lang = lang
   }, [lang])
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
     if (
@@ -69,10 +70,6 @@ export default function RegisterPage({
       return
     }
 
-    setStatus("ok")
-    setErrorMsg("")
-
-    // Automatically assign standard "USER" role for self-registration (security best practice)
     const payload: UserRegistrationPayload = {
       firstName: firstName.trim(),
       lastName: lastName.trim(),
@@ -81,12 +78,26 @@ export default function RegisterPage({
       role: "USER",
     }
 
-    console.log("Ready to send to Spring Boot backend controller:", payload)
+    try {
+      await registerUser({
+        firstName: payload.firstName,
+        lastName: payload.lastName,
+        email: payload.email,
+        password: payload.password,
+      })
+      setStatus("ok")
+      setErrorMsg("")
 
-    if (onRegisterSuccess) {
-      setTimeout(() => {
-        onRegisterSuccess(payload)
-      }, 1200)
+      if (onRegisterSuccess) {
+        setTimeout(() => {
+          onRegisterSuccess(payload)
+        }, 1200)
+      }
+    } catch (error) {
+      setStatus("err")
+      setErrorMsg(
+        error instanceof Error ? error.message : "Регистрацијата не успеа.",
+      )
     }
   }
 

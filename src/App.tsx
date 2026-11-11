@@ -334,6 +334,11 @@ export default function App() {
 
   const [query, setQuery] = useState("")
 
+  const [contractYear, setContractYear] = useState("Сите")
+
+  const [contractStatus, setContractStatus] =
+    useState<"Сите" | Contract["status"]>("Сите")
+
   const [invoiceStatus, setInvoiceStatus] =
     useState<"Сите" | Invoice["status"]>("Сите")
 
@@ -352,15 +357,23 @@ export default function App() {
   const [newContractValue, setNewContractValue] = useState("")
   const [contractFormError, setContractFormError] = useState("")
 
-  const filteredContracts = useMemo(
-    () =>
-      contracts.filter((item) =>
+  const filteredContracts = useMemo(() => {
+    const normalizedQuery = query.trim().toLowerCase()
+
+    return contracts.filter((item) => {
+      const matchesText =
+        !normalizedQuery ||
         `${item.id} ${item.supplier} ${item.subject}`
           .toLowerCase()
-          .includes(query.toLowerCase()),
-      ),
-    [query],
-  )
+          .includes(normalizedQuery)
+      const matchesYear =
+        contractYear === "Сите" || item.id.includes(contractYear)
+      const matchesStatus =
+        contractStatus === "Сите" || item.status === contractStatus
+
+      return matchesText && matchesYear && matchesStatus
+    })
+  }, [contractStatus, contractYear, contracts, query])
 
   const filteredInvoices = useMemo(
     () =>
@@ -820,6 +833,46 @@ export default function App() {
                   >
                     <Icon name="plus" size={15} /> Нов договор
                   </Button>
+                </div>
+                <div className="grid gap-3 border-b border-line bg-stone/30 p-5 sm:grid-cols-3 sm:p-6">
+                  <label className="text-xs font-semibold text-muted">
+                    Пребарај по број, име или предмет
+                    <input
+                      className="mt-1.5 w-full rounded-xl border border-line bg-white px-3 py-2.5 text-sm font-normal text-ink outline-none focus:border-ink"
+                      onChange={(event) => setQuery(event.target.value)}
+                      placeholder="пр. Cloud инфраструктура"
+                      value={query}
+                    />
+                  </label>
+                  <label className="text-xs font-semibold text-muted">
+                    Фискална година
+                    <select
+                      className="mt-1.5 w-full rounded-xl border border-line bg-white px-3 py-2.5 text-sm font-normal text-ink outline-none focus:border-ink"
+                      onChange={(event) => setContractYear(event.target.value)}
+                      value={contractYear}
+                    >
+                      <option value="Сите">Сите години</option>
+                      <option value="2026">2026</option>
+                      <option value="2025">2025</option>
+                    </select>
+                  </label>
+                  <label className="text-xs font-semibold text-muted">
+                    Статус
+                    <select
+                      className="mt-1.5 w-full rounded-xl border border-line bg-white px-3 py-2.5 text-sm font-normal text-ink outline-none focus:border-ink"
+                      onChange={(event) =>
+                        setContractStatus(
+                          event.target.value as "Сите" | Contract["status"],
+                        )
+                      }
+                      value={contractStatus}
+                    >
+                      <option value="Сите">Сите статуси</option>
+                      <option value="Активен">Активен</option>
+                      <option value="На проверка">На проверка</option>
+                      <option value="Завршен">Завршен</option>
+                    </select>
+                  </label>
                 </div>
                 <div className="hidden overflow-x-auto sm:block">
                   <table className="w-full min-w-[780px] text-left text-sm">
